@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:ffi';
 
-import 'package:ffi/ffi.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,46 +17,67 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-//  final _taglibFfiPlugin = TaglibFfi();
+  final formKey = GlobalKey<FormState>();
+  final titleC = TextEditingController();
+  final artistC = TextEditingController();
+  final albumC = TextEditingController();
+  final trackC = TextEditingController();
+  final yearC = TextEditingController();
+  final genreC = TextEditingController();
+  final commentC = TextEditingController();
+  final sampleRateC = TextEditingController();
+  final bitrateC = TextEditingController();
+  final channelsC = TextEditingController();
+  final lengthC = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // initPlatformState();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-
+  Future<void> readMetadataFromFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result == null) {
       return;
     }
 
     final filePath = result.files.single.path;
-
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      final tagLib = NativeLibrary(DynamicLibrary.open('libtag_c.so'));
-      final tagFileName = filePath!.toNativeUtf8();
-      final tagFile = tagLib.taglib_file_new(tagFileName.cast<Char>());
-      final tagFileTag = tagLib.taglib_file_tag(tagFile);
-      final tagFileTagTitle = tagLib.taglib_tag_title(tagFileTag);
-      platformVersion = tagFileTagTitle.cast<Utf8>().toDartString();
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+    if (filePath == null) {
+      return;
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
+    // Get Metadata.
+    late final Metadata? metaData;
+    try {
+      metaData = await TagLib.readMetadata(filePath: filePath);
+    } on PlatformException {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to read metadata: $PlatformException'),
+        ),
+      );
+      return;
+    }
 
     setState(() {
-      _platformVersion = platformVersion;
+      if (metaData == null) {
+        return;
+      }
+      titleC.text = metaData.title ?? '';
+      artistC.text = metaData.artist ?? '';
+      albumC.text = metaData.album ?? '';
+      trackC.text = metaData.track == 0 ? '' : metaData.track.toString();
+      yearC.text = metaData.year == 0 ? '' : metaData.year.toString();
+      genreC.text = metaData.genre ?? '';
+      commentC.text = metaData.comment ?? '';
+      sampleRateC.text =
+          metaData.sampleRate == 0 ? '' : metaData.sampleRate.toString();
+      bitrateC.text = metaData.bitrate == 0 ? '' : metaData.bitrate.toString();
+      channelsC.text =
+          metaData.channels == 0 ? '' : metaData.channels.toString();
+      lengthC.text = metaData.length == 0 ? '' : metaData.length.toString();
     });
   }
 
@@ -67,15 +86,106 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('taglib_ffi Example App'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Scrollbar(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Form(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      TextFormField(
+                        autofocus: false,
+                        controller: titleC,
+                        decoration: const InputDecoration(
+                          labelText: 'Title',
+                        ),
+                      ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: artistC,
+                        decoration: const InputDecoration(
+                          labelText: 'Artist',
+                        ),
+                      ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: albumC,
+                        decoration: const InputDecoration(
+                          labelText: 'Album',
+                        ),
+                      ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: trackC,
+                        decoration: const InputDecoration(
+                          labelText: 'Track',
+                        ),
+                      ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: yearC,
+                        decoration: const InputDecoration(
+                          labelText: 'Year',
+                        ),
+                      ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: genreC,
+                        decoration: const InputDecoration(
+                          labelText: 'Genre',
+                        ),
+                      ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: commentC,
+                        decoration: const InputDecoration(
+                          labelText: 'Comment',
+                        ),
+                      ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: sampleRateC,
+                        decoration: const InputDecoration(
+                          labelText: 'Sample Rate (kHz)',
+                        ),
+                      ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: bitrateC,
+                        decoration: const InputDecoration(
+                          labelText: 'Bitrate (kbps)',
+                        ),
+                      ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: channelsC,
+                        decoration: const InputDecoration(
+                          labelText: 'Channels',
+                        ),
+                      ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: lengthC,
+                        decoration: const InputDecoration(
+                          labelText: 'Length (Seconds)',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () async {
-            await initPlatformState();
+            await readMetadataFromFile();
           },
         ),
       ),

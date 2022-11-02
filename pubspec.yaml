@@ -1,5 +1,5 @@
 name: taglib_ffi
-description: Use TagLib to read and write audio metadata tags.
+description: Use TagLib to read audio metadata tags in flutter.
 version: 0.0.1
 homepage: https://github.com/realth000/taglib_ffi
 

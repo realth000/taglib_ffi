@@ -1,3 +1,3 @@
 library taglib_ffi;
 
-export 'src/taglib_bindings.dart';
+export 'src/taglib_ffi.dart';
