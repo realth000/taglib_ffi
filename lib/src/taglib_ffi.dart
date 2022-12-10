@@ -147,4 +147,48 @@ class TagLib {
     }
     return Isolate.exit(p);
   }
+
+  Future<Metadata?> readMetadataEx() async {
+    if (filePath.isEmpty) {
+      return null;
+    }
+    final p = ReceivePort();
+    await Isolate.spawn(_readMetadataEx, p.sendPort);
+    return await p.first as Metadata?;
+  }
+
+  Future<dynamic> _readMetadataEx(SendPort p) async {
+    try {
+      final meipuru = NativeLibrary(
+        Platform.isWindows
+            ? DynamicLibrary.open('libMeipuruLibC.dll')
+            : DynamicLibrary.open('libMeipuruLibC.so'),
+      );
+      late final Pointer<Char> tagFileName;
+      if (Platform.isWindows) {
+        tagFileName = filePath.toNativeUtf8().cast();
+      } else {
+        tagFileName = filePath.toNativeUtf8().cast();
+      }
+      final originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
+      final id3v2Tag = originalTag.cast<MeipuruTag>().ref;
+      final metaData = Metadata(
+        title: id3v2Tag.title.cast<Utf8>().toDartString(),
+        artist: id3v2Tag.artist.cast<Utf8>().toDartString(),
+        album: id3v2Tag.albumTitle.cast<Utf8>().toDartString(),
+        track: id3v2Tag.track,
+        year: id3v2Tag.year,
+        genre: id3v2Tag.genre.cast<Utf8>().toDartString(),
+        comment: id3v2Tag.comment.cast<Utf8>().toDartString(),
+        sampleRate: id3v2Tag.sampleRate,
+        bitrate: id3v2Tag.bitRate,
+        channels: id3v2Tag.channels,
+        length: id3v2Tag.length,
+      );
+      meipuru.MeipuruFree(originalTag.cast());
+      return Isolate.exit(p, metaData);
+    } catch (e) {
+      print('Error in readMetadataEx: $e');
+    }
+  }
 }

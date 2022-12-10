@@ -23,8 +23,9 @@ ffigen:
   headers:
     entry-points:
       - 'lib/bindings/tag_c.h'
-  # llvm-path:
-  #   - 'd:\Programming\LLVM'
+      - 'lib/bindings/meipuru_binding.h'
+  llvm-path:
+    - 'd:\Programming\LLVM'
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
