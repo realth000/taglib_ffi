@@ -743,5 +743,11 @@ class MeipuruID3v2Tag extends ffi.Struct {
 
   external ffi.Pointer<ffi.Char> lyrics;
 
+  @ffi.UnsignedLong()
+  external int lyricsLength;
+
   external ffi.Pointer<ffi.Char> albumCover;
+
+  @ffi.UnsignedInt()
+  external int albumCoverLength;
 }

@@ -29,6 +29,8 @@ class _MyAppState extends State<MyApp> {
   final bitrateC = TextEditingController();
   final channelsC = TextEditingController();
   final lengthC = TextEditingController();
+  final lyricsC = TextEditingController();
+  Uint8List? albumCoverData;
 
   @override
   void initState() {
@@ -79,6 +81,8 @@ class _MyAppState extends State<MyApp> {
       channelsC.text =
           metaData.channels == 0 ? '' : metaData.channels.toString();
       lengthC.text = metaData.length == 0 ? '' : metaData.length.toString();
+      lyricsC.text = metaData.lyrics ?? '';
+      albumCoverData = metaData.albumCover;
     });
   }
 
@@ -99,6 +103,7 @@ class _MyAppState extends State<MyApp> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
+                      if (albumCoverData != null) Image.memory(albumCoverData!),
                       TextFormField(
                         autofocus: false,
                         controller: titleC,
@@ -147,6 +152,8 @@ class _MyAppState extends State<MyApp> {
                         decoration: const InputDecoration(
                           labelText: 'Comment',
                         ),
+                        minLines: 1,
+                        maxLines: 10,
                       ),
                       TextFormField(
                         autofocus: false,
@@ -176,6 +183,15 @@ class _MyAppState extends State<MyApp> {
                           labelText: 'Length (Seconds)',
                         ),
                       ),
+                      TextFormField(
+                        autofocus: false,
+                        controller: lyricsC,
+                        decoration: const InputDecoration(
+                          labelText: 'Lyrics',
+                        ),
+                        minLines: 1,
+                        maxLines: 20,
+                      )
                     ],
                   ),
                 ),

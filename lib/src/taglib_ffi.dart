@@ -20,12 +20,18 @@ class Metadata {
     required this.bitrate,
     required this.channels,
     required this.length,
+    this.albumArtist,
+    this.albumTotalTrack,
+    this.lyrics,
+    this.albumCover,
   });
 
   final String? title;
   final String? artist;
   final String? album;
+  final String? albumArtist;
   final int? track;
+  final int? albumTotalTrack;
   final int? year;
   final String? genre;
   final String? comment;
@@ -33,6 +39,8 @@ class Metadata {
   final int? bitrate;
   final int? channels;
   final int? length;
+  final String? lyrics;
+  final Uint8List? albumCover;
 }
 
 class TagLib {
@@ -171,7 +179,7 @@ class TagLib {
         tagFileName = filePath.toNativeUtf8().cast();
       }
       final originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
-      final id3v2Tag = originalTag.cast<MeipuruTag>().ref;
+      final id3v2Tag = originalTag.cast<MeipuruID3v2Tag>().ref;
       final metaData = Metadata(
         title: id3v2Tag.title.cast<Utf8>().toDartString(),
         artist: id3v2Tag.artist.cast<Utf8>().toDartString(),
@@ -184,6 +192,14 @@ class TagLib {
         bitrate: id3v2Tag.bitRate,
         channels: id3v2Tag.channels,
         length: id3v2Tag.length,
+        albumArtist: id3v2Tag.albumArtist.cast<Utf8>().toDartString(),
+        albumTotalTrack: id3v2Tag.albumTotalTrack,
+        lyrics: id3v2Tag.lyrics
+            .cast<Utf8>()
+            .toDartString(length: id3v2Tag.lyricsLength),
+        albumCover: id3v2Tag.albumCover
+            .cast<Uint8>()
+            .asTypedList(id3v2Tag.albumCoverLength),
       );
       meipuru.MeipuruFree(originalTag.cast());
       return Isolate.exit(p, metaData);

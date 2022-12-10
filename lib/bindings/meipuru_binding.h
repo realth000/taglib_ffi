@@ -54,7 +54,9 @@ typedef struct {
     const int channels;
     const int length;
     const char *lyrics;
+    const unsigned long lyricsLength;
     const char *albumCover;
+    const unsigned int albumCoverLength;
 } MeipuruID3v2Tag;
 
 MEIPURU_EXPORT MeipuruTag *MeipuruReadTag(const char *filePath);
