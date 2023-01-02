@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:charset/charset.dart' as charset;
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
 
@@ -166,19 +168,39 @@ class TagLib {
   }
 
   Future<dynamic> _readMetadataEx(SendPort p) async {
+    Pointer<MeipuruID3v2Tag> originalTag = nullptr;
+    late final NativeLibrary meipuru;
     try {
-      final meipuru = NativeLibrary(
+      meipuru = NativeLibrary(
         Platform.isWindows
-            ? DynamicLibrary.open('libMeipuruLibC.dll')
+            ? DynamicLibrary.open('MeipuruLibC.dll')
             : DynamicLibrary.open('libMeipuruLibC.so'),
       );
       late final Pointer<Char> tagFileName;
       if (Platform.isWindows) {
         tagFileName = filePath.toNativeUtf8().cast();
+        // try {
+        //   final locale = await Get.find<LocaleService>().getLocale();
+        //   print('AAAA LOCALE: ${locale}');
+        //   if (locale.languageCode == 'zh' && locale.countryCode == 'CN') {
+        //     //if (locale != null && locale == 'zh_CN') {
+        //     // tagFileName = filePath.toNativeGbk().cast();
+        //     tagFileName = filePath.toNativeUtf8().cast();
+        //   } else {
+        //     tagFileName = filePath.toNativeUtf8().cast();
+        //   }
+        // } catch (e) {
+        //   print('Error in _readMetadataEx getting tagFileName: $e');
+        //   tagFileName = filePath.toNativeUtf8().cast();
+        // }
       } else {
         tagFileName = filePath.toNativeUtf8().cast();
       }
-      final originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
+      originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
+      if (originalTag.address == nullptr.address) {
+        print('FFI returned nullptr in meipuru.MeipuruReadID3v2Tag');
+        return Isolate.exit(p);
+      }
       final id3v2Tag = originalTag.cast<MeipuruID3v2Tag>().ref;
       final metaData = Metadata(
         title: id3v2Tag.title.cast<Utf8>().toDartString(),
@@ -194,17 +216,46 @@ class TagLib {
         length: id3v2Tag.length,
         albumArtist: id3v2Tag.albumArtist.cast<Utf8>().toDartString(),
         albumTotalTrack: id3v2Tag.albumTotalTrack,
-        lyrics: id3v2Tag.lyrics
-            .cast<Utf8>()
-            .toDartString(length: id3v2Tag.lyricsLength),
-        albumCover: id3v2Tag.albumCover
-            .cast<Uint8>()
-            .asTypedList(id3v2Tag.albumCoverLength),
+        // lyrics: id3v2Tag.lyricsLength > 0
+        //     ? id3v2Tag.lyrics
+        //         .cast<Utf8>()
+        //         .toDartString(length: id3v2Tag.lyricsLength)
+        //     : null,
+        // albumCover: id3v2Tag.albumCoverLength > 0
+        //     ? id3v2Tag.albumCover
+        //         .cast<Uint8>()
+        //         .asTypedList(id3v2Tag.albumCoverLength)
+        //     : null,
       );
-      meipuru.MeipuruFree(originalTag.cast());
+      meipuru.MeipuruFreeID3v2Tag(originalTag);
       return Isolate.exit(p, metaData);
     } catch (e) {
+      if (originalTag != nullptr) {
+        meipuru.MeipuruFreeID3v2Tag(originalTag);
+      }
       print('Error in readMetadataEx: $e');
+      return Isolate.exit(p, null);
     }
+  }
+}
+
+/// Convert extension for Windows.
+extension StringTagLibPointer on String {
+  /// To Latin1 FFI pointer method.
+  Pointer<Uint8> toNativeLatin1({Allocator allocator = malloc}) {
+    final units = latin1.encode(this);
+    final result = allocator<Uint8>(units.length + 1);
+    final nativeString = result.asTypedList(units.length + 1)..setAll(0, units);
+    nativeString[units.length] = 0;
+    return result.cast();
+  }
+
+  /// To GBK FFI pointer method.
+  Pointer<Uint8> toNativeGbk({Allocator allocator = malloc}) {
+    final units = charset.gbk.encode(this);
+    final result = allocator<Uint8>(units.length + 1);
+    final nativeString = result.asTypedList(units.length + 1)..setAll(0, units);
+    nativeString[units.length] = 0;
+    return result.cast();
   }
 }
