@@ -178,7 +178,7 @@ class TagLib {
       );
       late final Pointer<Char> tagFileName;
       if (Platform.isWindows) {
-        tagFileName = filePath.toNativeUtf8().cast();
+        tagFileName = filePath.toNativeGbk().cast();
         // try {
         //   final locale = await Get.find<LocaleService>().getLocale();
         //   print('AAAA LOCALE: ${locale}');
@@ -216,16 +216,16 @@ class TagLib {
         length: id3v2Tag.length,
         albumArtist: id3v2Tag.albumArtist.cast<Utf8>().toDartString(),
         albumTotalTrack: id3v2Tag.albumTotalTrack,
-        // lyrics: id3v2Tag.lyricsLength > 0
-        //     ? id3v2Tag.lyrics
-        //         .cast<Utf8>()
-        //         .toDartString(length: id3v2Tag.lyricsLength)
-        //     : null,
-        // albumCover: id3v2Tag.albumCoverLength > 0
-        //     ? id3v2Tag.albumCover
-        //         .cast<Uint8>()
-        //         .asTypedList(id3v2Tag.albumCoverLength)
-        //     : null,
+        lyrics: id3v2Tag.lyricsLength > 0
+            ? id3v2Tag.lyrics
+                .cast<Utf8>()
+                .toDartString(length: id3v2Tag.lyricsLength)
+            : null,
+        albumCover: id3v2Tag.albumCoverLength > 0
+            ? id3v2Tag.albumCover
+                .cast<Uint8>()
+                .asTypedList(id3v2Tag.albumCoverLength)
+            : null,
       );
       meipuru.MeipuruFreeID3v2Tag(originalTag);
       return Isolate.exit(p, metaData);
@@ -251,11 +251,11 @@ extension StringTagLibPointer on String {
   }
 
   /// To GBK FFI pointer method.
-  Pointer<Uint8> toNativeGbk({Allocator allocator = malloc}) {
+  Pointer<Utf16> toNativeGbk({Allocator allocator = malloc}) {
     final units = charset.gbk.encode(this);
     final result = allocator<Uint8>(units.length + 1);
     final nativeString = result.asTypedList(units.length + 1)..setAll(0, units);
     nativeString[units.length] = 0;
-    return result.cast();
+    return result.cast<Utf16>();
   }
 }
