@@ -95,105 +95,104 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Scrollbar(
           child: SingleChildScrollView(
+            primary: true,
             child: Padding(
               padding: const EdgeInsets.all(15),
               child: Form(
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      if (albumCoverData != null) Image.memory(albumCoverData!),
-                      TextFormField(
-                        autofocus: false,
-                        controller: titleC,
-                        decoration: const InputDecoration(
-                          labelText: 'Title',
-                        ),
+                key: formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    if (albumCoverData != null) Image.memory(albumCoverData!),
+                    TextFormField(
+                      autofocus: false,
+                      controller: titleC,
+                      decoration: const InputDecoration(
+                        labelText: 'Title',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: artistC,
-                        decoration: const InputDecoration(
-                          labelText: 'Artist',
-                        ),
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: artistC,
+                      decoration: const InputDecoration(
+                        labelText: 'Artist',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: albumC,
-                        decoration: const InputDecoration(
-                          labelText: 'Album',
-                        ),
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: albumC,
+                      decoration: const InputDecoration(
+                        labelText: 'Album',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: trackC,
-                        decoration: const InputDecoration(
-                          labelText: 'Track',
-                        ),
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: trackC,
+                      decoration: const InputDecoration(
+                        labelText: 'Track',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: yearC,
-                        decoration: const InputDecoration(
-                          labelText: 'Year',
-                        ),
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: yearC,
+                      decoration: const InputDecoration(
+                        labelText: 'Year',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: genreC,
-                        decoration: const InputDecoration(
-                          labelText: 'Genre',
-                        ),
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: genreC,
+                      decoration: const InputDecoration(
+                        labelText: 'Genre',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: commentC,
-                        decoration: const InputDecoration(
-                          labelText: 'Comment',
-                        ),
-                        minLines: 1,
-                        maxLines: 10,
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: commentC,
+                      decoration: const InputDecoration(
+                        labelText: 'Comment',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: sampleRateC,
-                        decoration: const InputDecoration(
-                          labelText: 'Sample Rate (kHz)',
-                        ),
+                      minLines: 1,
+                      maxLines: 10,
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: sampleRateC,
+                      decoration: const InputDecoration(
+                        labelText: 'Sample Rate (kHz)',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: bitrateC,
-                        decoration: const InputDecoration(
-                          labelText: 'Bitrate (kbps)',
-                        ),
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: bitrateC,
+                      decoration: const InputDecoration(
+                        labelText: 'Bitrate (kbps)',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: channelsC,
-                        decoration: const InputDecoration(
-                          labelText: 'Channels',
-                        ),
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: channelsC,
+                      decoration: const InputDecoration(
+                        labelText: 'Channels',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: lengthC,
-                        decoration: const InputDecoration(
-                          labelText: 'Length (Seconds)',
-                        ),
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: lengthC,
+                      decoration: const InputDecoration(
+                        labelText: 'Length (Seconds)',
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        controller: lyricsC,
-                        decoration: const InputDecoration(
-                          labelText: 'Lyrics',
-                        ),
-                        minLines: 1,
-                        maxLines: 20,
-                      )
-                    ],
-                  ),
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      controller: lyricsC,
+                      decoration: const InputDecoration(
+                        labelText: 'Lyrics',
+                      ),
+                      minLines: 1,
+                      maxLines: 20,
+                    )
+                  ],
                 ),
               ),
             ),
