@@ -2,7 +2,7 @@
 #define MEIPURU_BINDING_H
 
 #ifdef _WIN32
-#include <windows.h>
+#include <vcruntime.h>
 #endif
 
 #ifdef __cplusplus

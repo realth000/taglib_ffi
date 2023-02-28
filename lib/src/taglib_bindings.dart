@@ -576,6 +576,65 @@ class NativeLibrary {
       _taglib_id3v2_set_default_text_encodingPtr
           .asFunction<void Function(int)>();
 
+  void __va_start(
+    ffi.Pointer<va_list> arg0,
+  ) {
+    return ___va_start(
+      arg0,
+    );
+  }
+
+  late final ___va_startPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<va_list>)>>(
+          '__va_start');
+  late final ___va_start =
+      ___va_startPtr.asFunction<void Function(ffi.Pointer<va_list>)>();
+
+  void __security_init_cookie() {
+    return ___security_init_cookie();
+  }
+
+  late final ___security_init_cookiePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>(
+          '__security_init_cookie');
+  late final ___security_init_cookie =
+      ___security_init_cookiePtr.asFunction<void Function()>();
+
+  void __security_check_cookie(
+    int _StackCookie,
+  ) {
+    return ___security_check_cookie(
+      _StackCookie,
+    );
+  }
+
+  late final ___security_check_cookiePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.UintPtr)>>(
+          '__security_check_cookie');
+  late final ___security_check_cookie =
+      ___security_check_cookiePtr.asFunction<void Function(int)>();
+
+  void __report_gsfailure(
+    int _StackCookie,
+  ) {
+    return ___report_gsfailure(
+      _StackCookie,
+    );
+  }
+
+  late final ___report_gsfailurePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.UintPtr)>>(
+          '__report_gsfailure');
+  late final ___report_gsfailure =
+      ___report_gsfailurePtr.asFunction<void Function(int)>();
+
+  late final ffi.Pointer<ffi.UintPtr> ___security_cookie =
+      _lookup<ffi.UintPtr>('__security_cookie');
+
+  int get __security_cookie => ___security_cookie.value;
+
+  set __security_cookie(int value) => ___security_cookie.value = value;
+
   ffi.Pointer<MeipuruTag> MeipuruReadTag(
     ffi.Pointer<ffi.Char> filePath,
   ) {
@@ -605,6 +664,21 @@ class NativeLibrary {
               ffi.Pointer<ffi.Char>)>>('MeipuruReadID3v2Tag');
   late final _MeipuruReadID3v2Tag = _MeipuruReadID3v2TagPtr.asFunction<
       ffi.Pointer<MeipuruID3v2Tag> Function(ffi.Pointer<ffi.Char>)>();
+
+  ffi.Pointer<MeipuruID3v2Tag> MeipuruReadID3v2TagW(
+    ffi.Pointer<ffi.WChar> filePath,
+  ) {
+    return _MeipuruReadID3v2TagW(
+      filePath,
+    );
+  }
+
+  late final _MeipuruReadID3v2TagWPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<MeipuruID3v2Tag> Function(
+              ffi.Pointer<ffi.WChar>)>>('MeipuruReadID3v2TagW');
+  late final _MeipuruReadID3v2TagW = _MeipuruReadID3v2TagWPtr.asFunction<
+      ffi.Pointer<MeipuruID3v2Tag> Function(ffi.Pointer<ffi.WChar>)>();
 
   void MeipuruFreeTag(
     ffi.Pointer<MeipuruTag> tag,
@@ -677,6 +751,8 @@ abstract class TagLib_ID3v2_Encoding {
   static const int TagLib_ID3v2_UTF16BE = 2;
   static const int TagLib_ID3v2_UTF8 = 3;
 }
+
+typedef va_list = ffi.Pointer<ffi.Char>;
 
 class MeipuruTag extends ffi.Struct {
   external ffi.Pointer<ffi.Char> filePath;
@@ -765,3 +841,31 @@ class MeipuruID3v2Tag extends ffi.Struct {
   @ffi.UnsignedInt()
   external int albumCoverLength;
 }
+
+const int _VCRT_COMPILER_PREPROCESSOR = 1;
+
+const int _SAL_VERSION = 20;
+
+const int __SAL_H_VERSION = 180000000;
+
+const int _USE_DECLSPECS_FOR_SAL = 0;
+
+const int _USE_ATTRIBUTES_FOR_SAL = 0;
+
+const int _CRT_PACKING = 8;
+
+const int _VCRUNTIME_DISABLED_WARNINGS = 4514;
+
+const int _HAS_EXCEPTIONS = 1;
+
+const int _WCHAR_T_DEFINED = 1;
+
+const int NULL = 0;
+
+const int _HAS_CXX17 = 0;
+
+const int _HAS_CXX20 = 0;
+
+const int _HAS_CXX23 = 0;
+
+const int _HAS_NODISCARD = 1;

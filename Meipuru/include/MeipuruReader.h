@@ -6,6 +6,7 @@
 #include "fileref.h"
 #include "tag.h"
 
+#include "include/binding.h"
 #include "mpeg/mpegfile.h"
 #include "src/BaseTag.h"
 #include "src/ID3v2Tag.h"

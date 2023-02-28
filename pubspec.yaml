@@ -20,7 +20,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 ffigen:
-  output: 'lib/bindings/taglib_bindings.dart'
+  output: 'lib/src/taglib_bindings.dart'
   headers:
     entry-points:
       - 'lib/bindings/tag_c.h'
