@@ -1,7 +1,6 @@
 #include "include/MeipuruReader.h"
 
 #include <cstring>
-#include <filesystem>
 
 #include "taglib/taglib/mpeg/id3v2/frames/attachedpictureframe.h"
 #include "taglib/taglib/mpeg/id3v2/id3v2tag.h"
@@ -42,7 +41,22 @@ namespace Meipuru {
     }
 
     BaseTag *MeipuruReader::readTagFromFileW(const std::wstring &filePath) {
-        return readTagFromFile(std::filesystem::path(filePath).string());
+        const TagLib::FileRef fileRef(filePath.c_str());
+        if (fileRef.isNull()) {
+            std::cout << "File is NULL:" << filePath << std::endl;
+            return nullptr;
+        }
+
+        auto baseTag = new BaseTag();
+        // Do not overwrite file path if using WChar_t in other words UTF-16.
+        // baseTag->filePath = filePath.;
+        baseTag->fileName = fileRef.file()->name();
+        fetchBaseTag(fileRef.file(), baseTag);
+        if (option.logLevel == Util::LogLevel::Debug) {
+            std::cout << "Read tag from file:" << std::endl;
+            baseTag->print();
+        }
+        return baseTag;
     }
 
     bool MeipuruReader::fetchBaseTag(const TagLib::File *file, BaseTag *baseTag) const {
@@ -93,7 +107,6 @@ namespace Meipuru {
     }
 
     ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const std::string &filePath) {
-        std::cout << "AAAA" << filePath << std::endl;
         TagLib::MPEG::File mpegFile(filePath.c_str());
         if (!mpegFile.isValid()) {
             return nullptr;
@@ -146,7 +159,57 @@ namespace Meipuru {
         return retTag;
     }
     ID3v2Tag *MeipuruReader::readID3v2TagFromFileW(const std::wstring &filePath) {
-        return readID3v2TagFromFile(std::filesystem::path(filePath).string());
+        TagLib::MPEG::File mpegFile(filePath.c_str());
+        if (!mpegFile.isValid()) {
+            return nullptr;
+        }
+        if (!mpegFile.hasID3v2Tag()) {
+            return nullptr;
+        }
+        auto id3v2Tag = mpegFile.ID3v2Tag();
+        if (id3v2Tag == nullptr) {
+            return nullptr;
+        }
+        const bool useUnicode = option.useUnicode();
+        auto retTag = new ID3v2Tag;
+        // Do not overwrite file path if using WChar_t in other words UTF-16.
+        // retTag->filePath = filePath;
+        retTag->fileName = mpegFile.name();
+        fetchBaseTag(&mpegFile, retTag);
+        const auto frameListMap = id3v2Tag->frameListMap();
+        // TODO: Handle synchronous lyrics.
+        // if (!frameListMap["SYLT"].isEmpty()) {
+        //     tag->lyrics = frameListMap["SYLT"].front()->toString().to8Bit(useUnicode);
+        // }
+        if (!frameListMap["USLT"].isEmpty() && frameListMap["USLT"].front() != nullptr) {
+            retTag->lyrics = frameListMap["USLT"].front()->toString().to8Bit(useUnicode);
+        } else {
+            retTag->lyrics = "";
+        }
+        if (!frameListMap["APIC"].isEmpty()) {
+            auto albumCover = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameListMap["APIC"].front());
+            if (albumCover != nullptr && albumCover->picture().size() > 0) {
+                retTag->albumCover.size = albumCover->picture().size();
+                retTag->albumCover.data = (char *) malloc(sizeof(char) * retTag->albumCover.size + 1);
+                memcpy(retTag->albumCover.data, albumCover->picture().data(), retTag->albumCover.size);
+                retTag->albumCover.data[retTag->albumCover.size] = '\0';
+                retTag->albumCover.mimetype = albumCover->mimeType().to8Bit(option.useUnicode());
+                // std::cout << "Album Cover: YES" << albumCover->mimeType() << std::endl;
+                // std::fstream picStream;
+                // picStream.open("./test.jpg", std::ios::out | std::ios::binary | std::ios::trunc);
+                // picStream.write(albumCover->picture().data(), albumCover->picture().size());
+                // picStream.close();
+            } else {
+                retTag->albumCover.data = nullptr;
+                retTag->albumCover.size = 0;
+                retTag->albumCover.mimetype = "";
+            }
+        } else {
+            retTag->albumCover.data = nullptr;
+            retTag->albumCover.size = 0;
+            retTag->albumCover.mimetype = "";
+        }
+        return retTag;
     }
 
 }// namespace Meipuru

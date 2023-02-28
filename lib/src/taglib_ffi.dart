@@ -67,9 +67,12 @@ class TagLib {
             ? DynamicLibrary.open('tag_c.dll')
             : DynamicLibrary.open('libtag_c.so'),
       );
+      // FIXME: Should use Pointer<WChar> on Windows, which means we should
+      // add a now method to taglib_c.h.
       late final Pointer<Char> tagFileName;
       if (Platform.isWindows) {
-        tagFileName = filePath.toNativeUtf8().cast();
+        tagFileName = filePath.toNativeUtf16().cast();
+        final tagFile = tagLib.taglib_file_new(tagFileName);
 //        final buffer = StringBuffer();
 //        buffer.write tagFileName =
 //            Pointer.fromAddress(filePath.toNativeUtf8().address);
@@ -176,10 +179,10 @@ class TagLib {
             ? DynamicLibrary.open('MeipuruLibC.dll')
             : DynamicLibrary.open('libMeipuruLibC.so'),
       );
-      late final Pointer<Char> tagFileName;
       if (Platform.isWindows) {
-        // tagFileName = filePath.toNativeGbk().cast();
-        tagFileName = filePath.toNativeUtf16().cast();
+        // Use wchar_t as parameter on Windows.
+        final Pointer<WChar> tagFileName = filePath.toNativeUtf16().cast();
+        originalTag = meipuru.MeipuruReadID3v2TagW(tagFileName);
         // try {
         //   final locale = await Get.find<LocaleService>().getLocale();
         //   print('AAAA LOCALE: ${locale}');
@@ -195,9 +198,9 @@ class TagLib {
         //   tagFileName = filePath.toNativeUtf8().cast();
         // }
       } else {
-        tagFileName = filePath.toNativeUtf8().cast();
+        final Pointer<Char> tagFileName = filePath.toNativeUtf8().cast();
+        originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
       }
-      originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
       if (originalTag.address == nullptr.address) {
         print('FFI returned nullptr in meipuru.MeipuruReadID3v2Tag');
         return Isolate.exit(p);
