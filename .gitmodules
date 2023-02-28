@@ -1,0 +1,3 @@
+[submodule "Meipuru/taglib"]
+	path = Meipuru/taglib
+	url = https://github.com/realth000/taglib.git
