@@ -1,6 +1,9 @@
 #ifndef MEIPURU_BINDING_H
 #define MEIPURU_BINDING_H
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,6 +65,7 @@ typedef struct {
 MEIPURU_EXPORT MeipuruTag *MeipuruReadTag(const char *filePath);
 
 MEIPURU_EXPORT MeipuruID3v2Tag *MeipuruReadID3v2Tag(const char *filePath);
+MEIPURU_EXPORT MeipuruID3v2Tag *MeipuruReadID3v2TagW(const wchar_t *filePath);
 
 MEIPURU_EXPORT void MeipuruFreeTag(MeipuruTag *tag);
 

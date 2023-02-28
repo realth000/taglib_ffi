@@ -178,7 +178,8 @@ class TagLib {
       );
       late final Pointer<Char> tagFileName;
       if (Platform.isWindows) {
-        tagFileName = filePath.toNativeGbk().cast();
+        // tagFileName = filePath.toNativeGbk().cast();
+        tagFileName = filePath.toNativeUtf16().cast();
         // try {
         //   final locale = await Get.find<LocaleService>().getLocale();
         //   print('AAAA LOCALE: ${locale}');
