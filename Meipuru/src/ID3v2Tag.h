@@ -11,6 +11,7 @@ namespace Meipuru {
 
         Util::Picture albumCover;
         std::string lyrics;
+        size_t lyricsLength;
     };
 }
 

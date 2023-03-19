@@ -125,11 +125,13 @@ namespace Meipuru {
         fetchBaseTag(&mpegFile, retTag);
         const auto frameListMap = id3v2Tag->frameListMap();
         // TODO: Handle synchronous lyrics.
-        // if (!frameListMap["SYLT"].isEmpty()) {
-        //     tag->lyrics = frameListMap["SYLT"].front()->toString().to8Bit(useUnicode);
+        // if (!frameListMap["SYLT"].isEmpty() && frameListMap["SYLT"].front() != nullptr) {
+        //     retTag->lyrics = frameListMap["SYLT"].front()->toString().to8Bit(useUnicode);
+        //     retTag->lyricsLength = retTag->lyrics.length();
         // }
         if (!frameListMap["USLT"].isEmpty() && frameListMap["USLT"].front() != nullptr) {
             retTag->lyrics = frameListMap["USLT"].front()->toString().to8Bit(useUnicode);
+            retTag->lyricsLength = retTag->lyrics.length();
         } else {
             retTag->lyrics = "";
         }
@@ -178,11 +180,13 @@ namespace Meipuru {
         fetchBaseTag(&mpegFile, retTag);
         const auto frameListMap = id3v2Tag->frameListMap();
         // TODO: Handle synchronous lyrics.
-        // if (!frameListMap["SYLT"].isEmpty()) {
-        //     tag->lyrics = frameListMap["SYLT"].front()->toString().to8Bit(useUnicode);
+        // if (!frameListMap["SYLT"].isEmpty() && frameListMap["SYLY"].front() != nullptr) {
+        //     retTag->lyrics = frameListMap["SYLT"].front()->toString().to8Bit(useUnicode);
+        //     retTag->lyricsLength = retTag->lyrics.length();
         // }
         if (!frameListMap["USLT"].isEmpty() && frameListMap["USLT"].front() != nullptr) {
             retTag->lyrics = frameListMap["USLT"].front()->toString().to8Bit(useUnicode);
+            retTag->lyricsLength = retTag->lyrics.length();
         } else {
             retTag->lyrics = "";
         }
