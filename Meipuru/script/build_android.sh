@@ -24,7 +24,7 @@ do
 	mkdir ${BUILD_ROOT}
 	pushd ${BUILD_ROOT}
 	cmake ../ \
-	-DCMAKE_TOOLCHAIN_FILE=/home/th000/Android/Sdk/ndk/25.1.8937393/build/cmake/android.toolchain.cmake \
+	-DCMAKE_TOOLCHAIN_FILE=~/Android/Sdk/ndk/25.1.8937393/build/cmake/android.toolchain.cmake \
 	-DANDROID_ABI=${ABI} \
 	-DANDROID_PLATFORM=android-33 \
 	-DBUILD_SHARED_LIBS=on \

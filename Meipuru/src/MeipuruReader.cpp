@@ -41,6 +41,7 @@ namespace Meipuru {
     }
 
     BaseTag *MeipuruReader::readTagFromFileW(const std::wstring &filePath) {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
         const TagLib::FileRef fileRef(filePath.c_str());
         if (fileRef.isNull()) {
             std::cout << "File is NULL:" << filePath << std::endl;
@@ -57,6 +58,9 @@ namespace Meipuru {
             baseTag->print();
         }
         return baseTag;
+#else
+		return nullptr;
+#endif
     }
 
     bool MeipuruReader::fetchBaseTag(const TagLib::File *file, BaseTag *baseTag) const {
@@ -161,6 +165,7 @@ namespace Meipuru {
         return retTag;
     }
     ID3v2Tag *MeipuruReader::readID3v2TagFromFileW(const std::wstring &filePath) {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
         TagLib::MPEG::File mpegFile(filePath.c_str());
         if (!mpegFile.isValid()) {
             return nullptr;
@@ -214,6 +219,9 @@ namespace Meipuru {
             retTag->albumCover.mimetype = "";
         }
         return retTag;
+#else
+		return nullptr;
+#endif
     }
 
 }// namespace Meipuru
