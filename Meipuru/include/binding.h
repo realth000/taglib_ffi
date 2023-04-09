@@ -65,7 +65,10 @@ typedef struct {
 MEIPURU_EXPORT MeipuruTag *MeipuruReadTag(const char *filePath);
 
 MEIPURU_EXPORT MeipuruID3v2Tag *MeipuruReadID3v2Tag(const char *filePath);
+
+#ifdef _WIN32
 MEIPURU_EXPORT MeipuruID3v2Tag *MeipuruReadID3v2TagW(const wchar_t *filePath);
+#endif
 
 MEIPURU_EXPORT void MeipuruFreeTag(MeipuruTag *tag);
 
