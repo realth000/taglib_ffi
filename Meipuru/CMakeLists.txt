@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.05)
 project(Meipuru VERSION 0.1 LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Add definition to make it works.
