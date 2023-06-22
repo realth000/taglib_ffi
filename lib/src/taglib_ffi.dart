@@ -181,8 +181,9 @@ class TagLib {
       );
       if (Platform.isWindows) {
         // Use wchar_t as parameter on Windows.
-        final Pointer<WChar> tagFileName = filePath.toNativeUtf16().cast();
-        originalTag = meipuru.MeipuruReadID3v2TagW(tagFileName);
+        // FIXME: Fix multiplatform compatibility.
+        // final Pointer<WChar> tagFileName = filePath.toNativeUtf16().cast();
+        // originalTag = meipuru.MeipuruReadID3v2TagW(tagFileName);
         // try {
         //   final locale = await Get.find<LocaleService>().getLocale();
         //   print('AAAA LOCALE: ${locale}');
