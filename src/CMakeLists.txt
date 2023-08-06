@@ -51,8 +51,6 @@ add_library(taglib_ffi SHARED
         src/Utils.h
 )
 
-add_library(tag SHARED)
-
 add_subdirectory(taglib)
 
 set_target_properties(taglib_ffi PROPERTIES
