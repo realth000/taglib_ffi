@@ -1,4 +1,6 @@
 # Miscellaneous
+*_bindings_generated.dart
+cmake-build-*
 *.class
 *.log
 *.pyc
