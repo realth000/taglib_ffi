@@ -39,7 +39,6 @@ include_directories(taglib/taglib
         ${CMAKE_BINARY_DIR}/taglib
         ${CMAKE_BINARY_DIR}/plugins/taglib_ffi/shared/taglib # For building as a flutter plugin
 )
-message(">>> CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 
 add_library(taglib_ffi SHARED
         taglib_ffi.h
