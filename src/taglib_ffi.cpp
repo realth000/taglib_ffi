@@ -1,44 +1,42 @@
 #include "taglib_ffi.h"
 
+#include "src/MeipuruReader.h"
+
 #ifdef _WIN32
-FFI_PLUGIN_EXPORT Tag *readTag(const wchar_t *filePath) {
+FFI_PLUGIN_EXPORT Tag *readTag(wchar_t *filePath) {
 #else
 FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath) {
 #endif
 
   auto reader = Meipuru::MeipuruReader();
 
-#ifdef _Win32
-  auto tag = reader.readTagFromFileW(filePath);
-#else
   auto tag = reader.readTagFromFile(filePath);
-#endif
 
-  auto *meipuruTag = new MeipuruTag{
-      strdup(tag->filePath.c_str()),
-      strdup(tag->fileName.c_str()),
-      strdup(tag->title.c_str()),
-      strdup(tag->artist.c_str()),
-      strdup(tag->albumTitle.c_str()),
-      strdup(tag->albumArtist.c_str()),
+  auto *meipuruTag = new Tag{
+      tag->filePath.c_str(),
+      tag->fileName.c_str(),
+      tag->title.c_str(),
+      tag->artist.c_str(),
+      tag->albumTitle.c_str(),
+      tag->albumArtist.c_str(),
       tag->year,
       tag->track,
       tag->albumTotalTrack,
-      strdup(tag->genre.c_str()),
-      strdup(tag->comment.c_str()),
+      tag->genre.c_str(),
+      tag->comment.c_str(),
       tag->bitRate,
       tag->sampleRate,
       tag->channels,
       tag->length,
   };
-  delete tag;
+  meipuruTag->_owner = tag;
   return meipuruTag;
 }
 
 #ifdef _WIN32
-FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const wchar_t *filePath) {
+FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(wchar_t *filePath) {
 #else
-FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath) {
+FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath) {
 #endif
 
   auto reader = Meipuru::MeipuruReader();
@@ -53,60 +51,64 @@ FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath) {
     return nullptr;
   }
 
-  auto *meipuruID3v2Tag = new MeipuruID3v2Tag{
-      strdup(id3v2Tag->filePath.c_str()),
-      strdup(id3v2Tag->fileName.c_str()),
-      strdup(id3v2Tag->title.c_str()),
-      strdup(id3v2Tag->artist.c_str()),
-      strdup(id3v2Tag->albumTitle.c_str()),
-      strdup(id3v2Tag->albumArtist.c_str()),
+  auto *meipuruID3v2Tag = new ID3v2Tag{
+      id3v2Tag->filePath.c_str(),
+      id3v2Tag->fileName.c_str(),
+      id3v2Tag->title.c_str(),
+      id3v2Tag->artist.c_str(),
+      id3v2Tag->albumTitle.c_str(),
+      id3v2Tag->albumArtist.c_str(),
       id3v2Tag->year,
       id3v2Tag->track,
       id3v2Tag->albumTotalTrack,
-      strdup(id3v2Tag->genre.c_str()),
-      strdup(id3v2Tag->comment.c_str()),
+      id3v2Tag->genre.c_str(),
+      id3v2Tag->comment.c_str(),
       id3v2Tag->bitRate,
       id3v2Tag->sampleRate,
       id3v2Tag->channels,
       id3v2Tag->length,
-      strdup(id3v2Tag->lyrics.c_str()),
-      (unsigned long)(id3v2Tag->lyrics.size()),
-      id3v2Tag->albumCover.data,
+      id3v2Tag->lyrics.c_str(),
+      (unsigned long)(id3v2Tag->lyricsLength),
+      id3v2Tag->albumCover.data.data(),
       id3v2Tag->albumCover.size,
   };
-  delete id3v2Tag;
+  meipuruID3v2Tag->_owner = id3v2Tag;
   return meipuruID3v2Tag;
 }
 
 FFI_PLUGIN_EXPORT void freeTag(Tag *tag) {
-  if (tag == nullptr) {
-    return;
-  }
-  // No custom destructor due to used by dart ffi, free manually.
-  free(tag->filePath);
-  free(tag->fileName);
-  free(tag->title);
-  free(tag->artist);
-  free(tag->albumTitle);
-  free(tag->albumArtist);
-  free(tag->genre);
-  free(tag->comment);
+  delete static_cast<Meipuru::BaseTag *>(tag->_owner);
   delete tag;
+  tag = nullptr;
 }
 
 FFI_PLUGIN_EXPORT void freeID3v2Tag(ID3v2Tag *id3V2Tag) {
+  delete static_cast<Meipuru::ID3v2Tag *>(id3V2Tag->_owner);
+  delete id3V2Tag;
+  id3V2Tag = nullptr;
+}
+
+FFI_PLUGIN_EXPORT void printID3v2Tag(ID3v2Tag *id3V2Tag) {
   if (id3V2Tag == nullptr) {
+    std::cout << "ptr is empty" << std::endl;
     return;
   }
-  // No custom destructor due to used by dart ffi, free manually.
-  free(id3V2Tag->filePath);
-  free(id3V2Tag->fileName);
-  free(id3V2Tag->title);
-  free(id3V2Tag->artist);
-  free(id3V2Tag->albumTitle);
-  free(id3V2Tag->albumArtist);
-  free(id3V2Tag->genre);
-  free(id3V2Tag->comment);
-  free(id3V2Tag->lyrics);
-  delete id3V2Tag;
+
+  std::cout << "File: " << id3V2Tag->fileName << "\n"
+            << "File Path: " << id3V2Tag->filePath << "\n"
+            << "Title: " << id3V2Tag->title << "\n"
+            << "Artist: " << id3V2Tag->artist << "\n"
+            << "Album Title: " << id3V2Tag->albumTitle << "\n"
+            << "Album Artist: " << id3V2Tag->albumArtist << "\n"
+            << "Year: " << id3V2Tag->year << "\n"
+            << "Track: " << id3V2Tag->track << "\n"
+            << "Album Track Count: " << id3V2Tag->albumTotalTrack << "\n"
+            << "Genre: " << id3V2Tag->genre << "\n"
+            << "Comment: " << id3V2Tag->comment << "\n"
+            << "Bit Rate: " << id3V2Tag->bitRate << "\n"
+            << "Sample Rate: " << id3V2Tag->sampleRate << "\n"
+            << "Channels: " << id3V2Tag->channels << "\n"
+            << "Length: " << id3V2Tag->length
+            << "Album Cover (size): " << id3V2Tag->albumCoverLength << "\n"
+            << "Lyrics (size): " << id3V2Tag->lyricsLength << std::endl;
 }

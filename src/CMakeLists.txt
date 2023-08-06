@@ -42,6 +42,8 @@ include_directories(taglib/taglib
 message(">>> CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 
 add_library(taglib_ffi SHARED
+        taglib_ffi.h
+        taglib_ffi.cpp
         src/MeipuruReader.h
         src/MeipuruReader.cpp
         src/BaseTag.h

@@ -4,7 +4,7 @@ description: |
   Bindings for `src/taglib_ffi.h`.
   export CPATH="$(clang -v 2>&1 | grep "Selected GCC installation" | rev | cut -d' ' -f1 | rev)/include"
   Regenerate bindings with `flutter pub run ffigen --config ffigen.yaml`.
-output: 'lib/taglib_ffi_bindings_generated.dart'
+output: 'lib/src/taglib_ffi_bindings_generated.dart'
 headers:
   entry-points:
     - 'src/taglib_ffi.h'

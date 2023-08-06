@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
     late final Metadata? metaData;
     try {
       // metaData = await TagLib(filePath: filePath).readMetadata();
-      metaData = await TagLib(filePath: filePath).readMetadataEx();
+      metaData = await TagLib(filePath: filePath).readMetadata();
     } on PlatformException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
