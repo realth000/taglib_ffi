@@ -1,5 +1,6 @@
 # Miscellaneous
 cmake-build-*
+android/libs/**/*.so
 *.class
 *.log
 *.pyc
