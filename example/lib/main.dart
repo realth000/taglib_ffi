@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:taglib_ffi/taglib_ffi.dart';
 
-void main() {
+Future<void> main() async {
+  await initialize();
   runApp(const MyApp());
 }
 
@@ -53,7 +54,7 @@ class _MyAppState extends State<MyApp> {
     late final Metadata? metaData;
     try {
       // metaData = await TagLib(filePath: filePath).readMetadata();
-      metaData = await TagLib(filePath: filePath).readMetadata();
+      metaData = await readMetadata(filePath);
     } on PlatformException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

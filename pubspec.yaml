@@ -11,6 +11,7 @@ dependencies:
   ffi: ^2.0.2
   flutter:
     sdk: flutter
+  isolate_pool_2: ^1.0.4
   plugin_platform_interface: ^2.1.5
 
 dev_dependencies:

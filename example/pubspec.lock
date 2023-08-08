@@ -104,6 +104,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  isolate_pool_2:
+    dependency: transitive
+    description:
+      name: isolate_pool_2
+      sha256: "4951c2820c36826efdf7d3fff94c3affdf183e9724cfbfe120ff6e1dda1f0f63"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.4"
   js:
     dependency: transitive
     description:
