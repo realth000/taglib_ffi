@@ -76,8 +76,8 @@ class _ReadMetadataJob extends PooledJob<Metadata?> {
       return null;
     }
     final p = ReceivePort();
-    await Isolate.spawn(_readMetadata, <dynamic>[p.sendPort, filePath]);
-    return await p.first as Metadata?;
+    Isolate.spawn(_readMetadata, <dynamic>[p.sendPort, filePath]);
+    return await p.first;
   }
 }
 
