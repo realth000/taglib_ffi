@@ -83,7 +83,7 @@ class _ReadMetadataJob extends PooledJob<Metadata?> {
 
 class _TagLib {
   _TagLib([int? isolateCount]) {
-    this.isolateCount = isolateCount ?? 4;
+    this.isolateCount = isolateCount ?? 1;
     pool = IsolatePool(this.isolateCount);
   }
 
