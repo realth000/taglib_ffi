@@ -1,6 +1,7 @@
 # Miscellaneous
 cmake-build-*
 android/libs/**/*.so
+*generated.dart
 *.class
 *.log
 *.pyc

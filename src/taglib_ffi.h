@@ -66,17 +66,9 @@ typedef struct {
   void *_owner;
 } ID3v2Tag;
 
-#ifdef _WIN32
-FFI_PLUGIN_EXPORT Tag *readTag(wchar_t *filePath);
-#else
 FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath);
-#endif
 
-#ifdef _WIN32
-FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(wchar_t *filePath);
-#else
 FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath);
-#endif
 
 FFI_PLUGIN_EXPORT void freeTag(Tag *tag);
 

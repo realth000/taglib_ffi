@@ -114,29 +114,8 @@ Future<dynamic> _readMetadata(List<dynamic> params) async {
           ? DynamicLibrary.open('taglib_ffi.dll')
           : DynamicLibrary.open('libtaglib_ffi.so'),
     );
-    if (Platform.isWindows) {
-      // Use wchar_t as parameter on Windows.
-      // FIXME: Fix multiplatform compatibility.
-      // final Pointer<WChar> tagFileName = filePath.toNativeUtf16().cast();
-      // originalTag = meipuru.MeipuruReadID3v2TagW(tagFileName);
-      // try {
-      //   final locale = await Get.find<LocaleService>().getLocale();
-      //   print('AAAA LOCALE: ${locale}');
-      //   if (locale.languageCode == 'zh' && locale.countryCode == 'CN') {
-      //     //if (locale != null && locale == 'zh_CN') {
-      //     // tagFileName = filePath.toNativeGbk().cast();
-      //     tagFileName = filePath.toNativeUtf8().cast();
-      //   } else {
-      //     tagFileName = filePath.toNativeUtf8().cast();
-      //   }
-      // } catch (e) {
-      //   print('Error in _readMetadataEx getting tagFileName: $e');
-      //   tagFileName = filePath.toNativeUtf8().cast();
-      // }
-    } else {
-      final Pointer<Char> tagFileName = filePath.toNativeUtf8().cast();
-      originalTag = meipuru.readID3v2Tag(tagFileName);
-    }
+    final Pointer<Char> tagFileName = filePath.toNativeUtf8().cast();
+    originalTag = meipuru.readID3v2Tag(tagFileName);
     if (originalTag.address == nullptr.address) {
       print('FFI returned nullptr in meipuru.MeipuruReadID3v2Tag');
       return Isolate.exit(p);

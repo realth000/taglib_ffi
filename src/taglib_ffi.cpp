@@ -2,11 +2,7 @@
 
 #include "src/MeipuruReader.h"
 
-#ifdef _WIN32
-FFI_PLUGIN_EXPORT Tag *readTag(wchar_t *filePath) {
-#else
 FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath) {
-#endif
 
   auto reader = Meipuru::MeipuruReader();
 
@@ -33,19 +29,10 @@ FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath) {
   return meipuruTag;
 }
 
-#ifdef _WIN32
-FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(wchar_t *filePath) {
-#else
 FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath) {
-#endif
 
   auto reader = Meipuru::MeipuruReader();
-
-#ifdef _WIN32
-  auto id3v2Tag = reader.readID3v2TagFromFileW(filePath);
-#else
   auto id3v2Tag = reader.readID3v2TagFromFile(filePath);
-#endif
 
   if (id3v2Tag == nullptr) {
     return nullptr;

@@ -1,4 +1,5 @@
 #include "toolkit/tbytevector.h"
+#include <cstdint>
 #include <iostream>
 #include <vector>
 

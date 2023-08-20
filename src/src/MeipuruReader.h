@@ -29,13 +29,8 @@ public:
   explicit MeipuruReader(
       const MeipuruReaderOption &meipuruReaderOption = MeipuruReaderOption());
 
-#ifdef _WIN32
-  BaseTag *readTagFromFile(const wchar_t *filePath);
-  ID3v2Tag *readID3v2TagFromFile(const wchar_t *filePath);
-#else
   BaseTag *readTagFromFile(const char *filePath);
   ID3v2Tag *readID3v2TagFromFile(const char *filePath);
-#endif
 
 private:
   bool fetchBaseTag(const TagLib::File *file, BaseTag *baseTag) const;

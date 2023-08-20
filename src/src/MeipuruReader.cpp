@@ -1,7 +1,5 @@
 #include "MeipuruReader.h"
 
-#include <cstring>
-
 #include "taglib/taglib/mpeg/id3v2/frames/attachedpictureframe.h"
 #include "taglib/taglib/mpeg/id3v2/id3v2tag.h"
 #include "taglib/taglib/toolkit/tpropertymap.h"
@@ -19,11 +17,7 @@ bool MeipuruReaderOption::useUnicode() const { return unicode; }
 MeipuruReader::MeipuruReader(const MeipuruReaderOption &meipuruReaderOption)
     : option(meipuruReaderOption) {}
 
-#ifdef _WIN32
-BaseTag *MeipuruReader::readTagFromFile(const wchar_t *filePath) {
-#else
 BaseTag *MeipuruReader::readTagFromFile(const char *filePath) {
-#endif
   std::cout << "Reading file" << filePath << std::endl;
   const TagLib::FileRef fileRef(filePath);
   if (fileRef.isNull()) {
@@ -62,7 +56,7 @@ bool MeipuruReader::fetchBaseTag(const TagLib::File *file,
   baseTag->albumArtist =
       std::move(propertyMap["ALBUMARTIST"].toString().to8Bit(useUnicode));
   const auto trackNumberString =
-      std::move(propertyMap["TRACKNUMBER"].toString());
+      propertyMap["TRACKNUMBER"].toString();
   if (!trackNumberString.isEmpty()) {
     const auto pos = trackNumberString.split("/");
     if (pos.size() == 2) {
@@ -92,11 +86,7 @@ bool MeipuruReader::fetchBaseTag(const TagLib::File *file,
   return true;
 }
 
-#ifdef _WIN32
-ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const wchar_t *filePath) {
-#else
 ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath) {
-#endif
   TagLib::MPEG::File mpegFile(filePath);
   if (!mpegFile.isValid()) {
     return nullptr;
@@ -126,7 +116,7 @@ ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath) {
     const auto lyricString =
         std::move(frameListMap["USLT"].front()->toString().to8Bit(useUnicode));
     retTag->lyricsLength = lyricString.length();
-    retTag->lyrics = std::move(lyricString);
+    retTag->lyrics = lyricString;
   } else {
     retTag->lyrics = "";
   }
@@ -135,7 +125,7 @@ ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath) {
         frameListMap["APIC"].front());
     if (albumCover != nullptr && albumCover->picture().size() > 0) {
       retTag->albumCover.size = albumCover->picture().size();
-      retTag->albumCover.data = std::move(albumCover->picture());
+      retTag->albumCover.data = albumCover->picture();
       //          (char *)malloc(sizeof(char) * retTag->albumCover.size + 1);
       //      memcpy(retTag->albumCover.data, albumCover->picture().data(),
       //             retTag->albumCover.size);
