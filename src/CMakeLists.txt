@@ -10,6 +10,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # add_definitions(-DTAGLIB_STATIC)
 
+if (MSVC)
+  add_compile_options("/MP")
+endif()
+
 include_directories(taglib/taglib
         ${CMAKE_CURRENT_SOURCE_DIR}/taglib/taglib/toolkit
         ${CMAKE_CURRENT_SOURCE_DIR}/taglib/taglib/asf

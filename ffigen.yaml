@@ -17,3 +17,6 @@ preamble: |
 comments:
   style: any
   length: full
+# For Windows:
+# llvm-path:
+#   - 'D:\PATH\TO\LLVM'
