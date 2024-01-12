@@ -1,3 +1,4 @@
+.cache/
 # Miscellaneous
 cmake-build-*
 android/libs/**/*.so
