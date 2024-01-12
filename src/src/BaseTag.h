@@ -1,11 +1,11 @@
 #ifndef MEIPURU_BASETAG_H
 #define MEIPURU_BASETAG_H
 
-#include <iostream>
+#include <string>
 
 namespace Meipuru {
 class BaseTag {
-public:
+ public:
   virtual void print();
 
   std::string filePath;
@@ -24,6 +24,6 @@ public:
   int channels;
   int length;
 };
-} // namespace Meipuru
+}  // namespace Meipuru
 
-#endif // MEIPURU_BASETAG_H
+#endif  // MEIPURU_BASETAG_H

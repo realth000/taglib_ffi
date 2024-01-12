@@ -1,7 +1,6 @@
-#include "toolkit/tbytevector.h"
 #include <cstdint>
-#include <iostream>
-#include <vector>
+
+#include "toolkit/tbytevector.h"
 
 namespace Meipuru::Util {
 enum Encoding : int8_t {
@@ -16,4 +15,4 @@ struct Picture {
   std::string mimetype;
   unsigned int size;
 };
-} // namespace Meipuru::Util
+}  // namespace Meipuru::Util

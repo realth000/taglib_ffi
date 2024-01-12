@@ -17,7 +17,6 @@
 #else
 #define FFI_PLUGIN_EXPORT __attribute__((visibility("default")))
 #endif
-#define MEIPURU_EXPORT FFI_PLUGIN_EXPORT
 /////
 
 #ifdef __cplusplus
@@ -40,6 +39,8 @@ typedef struct {
   int sampleRate;
   int channels;
   int length;
+  // The `_owner` field is an internal member who really owns the strings in
+  // current `Tag`. DO NOT MODIFY it except free;
   void *_owner;
 } Tag;
 
@@ -63,6 +64,8 @@ typedef struct {
   unsigned long lyricsLength;
   const char *albumCover;
   unsigned int albumCoverLength;
+  // The `_owner` field is an internal member who really owns the strings in
+  // current `Tag`. DO NOT MODIFY it except free;
   void *_owner;
 } ID3v2Tag;
 

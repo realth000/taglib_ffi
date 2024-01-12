@@ -59,6 +59,7 @@ add_library(taglib_ffi SHARED
 )
 
 add_subdirectory(taglib)
+add_subdirectory(example)
 
 set_target_properties(taglib_ffi PROPERTIES
         PUBLIC_HEADER taglib_ffi.h

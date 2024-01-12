@@ -55,8 +55,7 @@ bool MeipuruReader::fetchBaseTag(const TagLib::File *file,
   // TODO: albumArtist is TagLib::string, should be std::string types.
   baseTag->albumArtist =
       std::move(propertyMap["ALBUMARTIST"].toString().to8Bit(useUnicode));
-  const auto trackNumberString =
-      propertyMap["TRACKNUMBER"].toString();
+  const auto trackNumberString = propertyMap["TRACKNUMBER"].toString();
   if (!trackNumberString.isEmpty()) {
     const auto pos = trackNumberString.split("/");
     if (pos.size() == 2) {
@@ -150,4 +149,4 @@ ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath) {
   return retTag;
 }
 
-} // namespace Meipuru
+}  // namespace Meipuru

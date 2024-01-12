@@ -3,11 +3,11 @@
 #include "src/MeipuruReader.h"
 
 FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath) {
-
   auto reader = Meipuru::MeipuruReader();
 
   auto tag = reader.readTagFromFile(filePath);
 
+  // The data in `tag` is also implictly "borrowed" by `meipuruTag`.
   auto *meipuruTag = new Tag{
       tag->filePath.c_str(),
       tag->fileName.c_str(),
@@ -30,7 +30,6 @@ FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath) {
 }
 
 FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath) {
-
   auto reader = Meipuru::MeipuruReader();
   auto id3v2Tag = reader.readID3v2TagFromFile(filePath);
 
@@ -38,6 +37,7 @@ FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath) {
     return nullptr;
   }
 
+  // The data in `id3v2Tag` is also implictly "borrowed" by `meipuruID3v2Tag`.
   auto *meipuruID3v2Tag = new ID3v2Tag{
       id3v2Tag->filePath.c_str(),
       id3v2Tag->fileName.c_str(),
@@ -66,13 +66,11 @@ FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath) {
 FFI_PLUGIN_EXPORT void freeTag(Tag *tag) {
   delete static_cast<Meipuru::BaseTag *>(tag->_owner);
   delete tag;
-  tag = nullptr;
 }
 
 FFI_PLUGIN_EXPORT void freeID3v2Tag(ID3v2Tag *id3V2Tag) {
   delete static_cast<Meipuru::ID3v2Tag *>(id3V2Tag->_owner);
   delete id3V2Tag;
-  id3V2Tag = nullptr;
 }
 
 FFI_PLUGIN_EXPORT void printID3v2Tag(ID3v2Tag *id3V2Tag) {
