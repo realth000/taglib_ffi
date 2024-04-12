@@ -1,5 +1,7 @@
 #include "ID3v2Tag.h"
 
+#include <iostream>
+
 namespace Meipuru {
 void ID3v2Tag::print() {
   BaseTag::print();
