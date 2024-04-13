@@ -1,17 +1,24 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 if [ "x${ANDROID_HOME}" == "x" ];then
 	echo "error: env ANDROID_HOME not set"
 	exit 1
 fi
 
+if [ -z "$1" ];then
+  echo "error: need to specify the directory to save built *.so".
+  echo ""
+  echo "Usage: $0 <directory/to/save/built/*.so>"
+  exit 1
+fi
+
 SCRIPT_DIR="$(dirname $0 | xargs realpath)"
 SRC_ROOT="${SCRIPT_DIR}/../src"
 BUILD_ROOT="${SCRIPT_DIR}/../build/taglib_ffi_android"
-#SAVE_ROOT="$(realpath $1)"
-SAVE_ROOT="${SCRIPT_DIR}/../android/libs"
+SAVE_ROOT="$(realpath $1)"
+#SAVE_ROOT="${SCRIPT_DIR}/../android/libs"
 ABIS=("arm64-v8a" "armeabi-v7a" "x86_64" "x86")
 NDK_ROOT=""
 
