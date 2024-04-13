@@ -1,3 +1,4 @@
+*.so
 # Miscellaneous
 *.class
 *.log
