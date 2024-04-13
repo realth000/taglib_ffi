@@ -14,7 +14,7 @@ class MeipuruReaderOption {
  public:
   explicit MeipuruReaderOption();
 
-  bool useUnicode() const;
+  [[nodiscard]] bool useUnicode() const;
 
   Util::Encoding encoding;
   Util::LogLevel logLevel;

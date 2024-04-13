@@ -75,7 +75,7 @@ bool MeipuruReader::fetchBaseTag(const TagLib::File *file,
     baseTag->bitRate = audioProperties->bitrate();
     baseTag->sampleRate = audioProperties->sampleRate();
     baseTag->channels = audioProperties->channels();
-    baseTag->length = audioProperties->length();
+    baseTag->length = audioProperties->lengthInSeconds();
   } else {
     baseTag->bitRate = 0;
     baseTag->sampleRate = 0;
@@ -125,17 +125,8 @@ ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath) {
     if (albumCover != nullptr && albumCover->picture().size() > 0) {
       retTag->albumCover.size = albumCover->picture().size();
       retTag->albumCover.data = albumCover->picture();
-      //          (char *)malloc(sizeof(char) * retTag->albumCover.size + 1);
-      //      memcpy(retTag->albumCover.data, albumCover->picture().data(),
-      //             retTag->albumCover.size);
-      //      retTag->albumCover.data[retTag->albumCover.size] = '\0';
       retTag->albumCover.mimetype =
           std::move(albumCover->mimeType().to8Bit(option.useUnicode()));
-      // std::cout << "Album Cover: YES" << albumCover->mimeType() << std::endl;
-      // std::fstream picStream;
-      // picStream.open("./test.jpg", std::ios::out | std::ios::binary |
-      // std::ios::trunc); picStream.write(albumCover->picture().data(),
-      // albumCover->picture().size()); picStream.close();
     } else {
       retTag->albumCover.data = TagLib::ByteVector();
       retTag->albumCover.size = 0;

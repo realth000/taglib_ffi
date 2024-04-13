@@ -8,7 +8,7 @@ enum Encoding : int8_t {
   Latin1,
 };
 
-enum LogLevel : int8_t { Fatal = 0, Critical, Error, Warning, Debug };
+enum class LogLevel : int8_t { Fatal = 0, Critical, Error, Warning, Debug };
 
 struct Picture {
   TagLib::ByteVector data;
