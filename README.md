@@ -135,18 +135,7 @@ After running `build_android.sh`, all `*.so` are saved in:
     └── libtag.so
 ```
 
-Copy the save directory to the app's `android/libs/` directory.
-
-Finally configure `libs` in `android/app/build.gradle`:
-
-```diff
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-+       main {
-+           jniLibs.srcDirs = [ 'libs' ]
-+       }
-    }
-```
+Copy the save directory to the app's `android/src/main/jniLibs` directory.
 
 ### Linux
 

@@ -1,7 +1,8 @@
 name: taglib_ffi_dart
 description: Use TagLib to read and write audio metadata tags in dart/flutter.
 version: 0.0.1
-homepage:
+homepage: https://github.com/realth000/taglib_ffi
+repository: https://github.com/realth000/taglib_ffi
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
