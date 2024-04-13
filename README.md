@@ -89,11 +89,79 @@ class Metadata {
 
 ## Build from source
 
-* For Android, bundle `*.so`s by run `./scripts/build_android.sh`.
-  * After that, `libtag.so` and `libtaglib_ffi.so` are automatically bundled with app.
-  * Finally, run `flutter build apk`.
-  * To build `*.so`, Android NDK and `${ANDROID_HOME}` variable are required.
-* For Windows and Linux, just run `flutter build windows` or `flutter build linux`.
-* For Linux, when failed to find header files, export the variable:
+### All
+
+All platforms should generate the binding dart code first.
+```bash
+dart pub get
+dart run ffigen --config ffigen.yaml
+```
+
+* Set llvm directory in `ffigen.yaml` if llvm is not found on Windows.
+  ```yaml
+  # For Windows:
+  # llvm-path:
+  #   - 'D:\PATH\TO\LLVM'
+  ```
+* Run the following command if system header is not found on Linux.
   * `export CPATH="$(clang -v 2>&1 | grep "Selected GCC installation" | rev | cut -d' ' -f1 | rev)/include"`
   * See [dart-lang issue](https://github.com/dart-lang/native/issues/338#issuecomment-1813390726)
+
+### Android
+
+```bash
+# Export env, NDK is required.
+export ANDROID_HOME=/path/to/Android/SDK
+
+# Build *.so and save somewhere.
+./scripts/build_android.sh /path/to/save/built/libs
+```
+
+After running `build_android.sh`, all `*.so` are saved in:
+
+```
+/your_save_directory
+├── arm64-v8a
+│   ├── libtaglib_ffi.so
+│   └── libtag.so
+├── armeabi-v7a
+│   ├── libtaglib_ffi.so
+│   └── libtag.so
+├── x86
+│   ├── libtaglib_ffi.so
+│   └── libtag.so
+└── x86_64
+    ├── libtaglib_ffi.so
+    └── libtag.so
+```
+
+Copy the save directory to the app's `android/libs/` directory.
+
+Finally configure `libs` in `android/app/build.gradle`:
+
+```diff
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
++       main {
++           jniLibs.srcDirs = [ 'libs' ]
++       }
+    }
+```
+
+### Linux
+
+```
+# After add to pubspec.yaml
+flutter build linux
+```
+
+### Windows
+
+```
+# After add to pubspec.yaml
+flutter build windows
+```
+
+* For Windows and Linux, just run `flutter build windows` or `flutter build linux`.
+* For Windows
+* For Linux, when failed to find header files, export the variable:
