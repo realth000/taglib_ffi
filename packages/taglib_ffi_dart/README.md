@@ -6,6 +6,8 @@ Use [TagLib](https://taglib.org/) to manage audio metadata tags in dart/flutter.
 
 taglib_ffi is currently work in progress. API may change in the future.
 
+Currently test on Android and Linux.
+
 ## Usage
 
 ``` dart
