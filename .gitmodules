@@ -1,3 +1,3 @@
-[submodule "src/taglib"]
-	path = src/taglib
-	url = https://github.com/realth000/taglib.git
+[submodule "packages/taglib_ffi_dart/src/taglib"]
+	path = packages/taglib_ffi_dart/src/taglib
+	url = https://github.com/realth000/taglib
