@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: taglib_ffi_dart
+dependency_overrides:
+  taglib_ffi_dart:
+    path: ..

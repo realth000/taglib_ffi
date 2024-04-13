@@ -1,0 +1,31 @@
+name: taglib_ffi_dart_libs
+description: "Built libs for taglib_ffi_dart"
+version: 0.0.1
+homepage: https://github.com/realth000/taglib_ffi
+repository: https://github.com/realth000/taglib_ffi
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: kzs.th000.taglib_ffi_dart_libs
+        pluginClass: TaglibFfiDartLibsPlugin
+      ios:
+        pluginClass: TaglibFfiDartLibsPlugin
+      linux:
+        pluginClass: TaglibFfiDartLibsPlugin
+      macos:
+        pluginClass: TaglibFfiDartLibsPlugin
+      windows:
+        pluginClass: TaglibFfiDartLibsPluginCApi
+      web:
+        pluginClass: TaglibFfiDartLibsWeb
+        fileName: taglib_ffi_dart_libs_web.dart

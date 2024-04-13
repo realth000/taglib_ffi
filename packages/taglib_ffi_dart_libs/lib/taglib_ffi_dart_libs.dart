@@ -1,0 +1,1 @@
+library taglib_ffi_dart_libs;
