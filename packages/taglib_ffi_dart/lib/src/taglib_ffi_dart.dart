@@ -9,7 +9,11 @@ import 'package:isolate_pool_2/isolate_pool_2.dart';
 
 import 'taglib_ffi_bindings_generated.dart';
 
+/// Audio metada data class.
+///
+/// Holding all metadata types and values.
 class Metadata {
+  /// Constructor.
   Metadata({
     required this.title,
     required this.artist,
@@ -49,6 +53,7 @@ late final _TagLib _taglib;
 
 var _initialized = false;
 
+/// Initialize talibg_ffi_dart package.
 Future<void> initialize({int? isolateCount}) async {
   if (_initialized) {
     return;
@@ -99,7 +104,10 @@ class _TagLib {
   }
 }
 
-Future<Metadata?> readMetadata(String filePath) async {
+/// Read auto metadata from given [filePath].
+///
+/// Return null if file not found or failed to load data.
+Future<Metadata?> readMetadata(String filePath) async { 
   return _taglib.readMetadata(filePath);
 }
 
