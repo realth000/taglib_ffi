@@ -20,5 +20,7 @@ int main(int argc, char *argv[]) {
   printf("title=%s, artist=%s, album=%s\n", fp->title, fp->artist,
          fp->albumTitle);
 
+  freeID3v2Tag(fp);
+
   return 0;
 }

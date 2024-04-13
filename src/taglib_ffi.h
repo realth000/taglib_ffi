@@ -73,9 +73,9 @@ FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath);
 
 FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath);
 
-FFI_PLUGIN_EXPORT void freeTag(Tag *tag);
+FFI_PLUGIN_EXPORT void freeTag(const Tag *tag);
 
-FFI_PLUGIN_EXPORT void freeID3v2Tag(ID3v2Tag *id3V2Tag);
+FFI_PLUGIN_EXPORT void freeID3v2Tag(const ID3v2Tag *id3V2Tag);
 
 // Only use for debug.
 FFI_PLUGIN_EXPORT void printID3v2Tag(ID3v2Tag *tag);

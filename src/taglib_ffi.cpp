@@ -63,12 +63,12 @@ FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath) {
   return meipuruID3v2Tag;
 }
 
-FFI_PLUGIN_EXPORT void freeTag(Tag *tag) {
+FFI_PLUGIN_EXPORT void freeTag(const Tag *tag) {
   delete static_cast<Meipuru::BaseTag *>(tag->_owner);
   delete tag;
 }
 
-FFI_PLUGIN_EXPORT void freeID3v2Tag(ID3v2Tag *id3V2Tag) {
+FFI_PLUGIN_EXPORT void freeID3v2Tag(const ID3v2Tag *id3V2Tag) {
   delete static_cast<Meipuru::ID3v2Tag *>(id3V2Tag->_owner);
   delete id3V2Tag;
 }
