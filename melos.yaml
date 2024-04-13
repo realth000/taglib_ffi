@@ -1,0 +1,4 @@
+name: taglib_ffi_dart
+
+packages:
+  - packages/**
