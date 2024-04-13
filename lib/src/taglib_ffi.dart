@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
-import 'package:flutter/services.dart';
 import 'package:isolate_pool_2/isolate_pool_2.dart';
 
 import 'taglib_ffi_bindings_generated.dart';
