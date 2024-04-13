@@ -10,7 +10,7 @@ taglib_ffi is currently work in progress. API may change in the future.
 
 ``` dart
 
-import 'package:taglib_ffi/taglib_ffi.dart' as taglib;
+import 'package:taglib_ffi_dart/taglib_ffi_dart.dart' as taglib;
 
 final filePath = 'path/to/audio/file';
 
@@ -47,6 +47,17 @@ class Metadata {
 ```
 
 ## Features
+
+### Platform support
+
+* [x] Android
+* [ ] iOS
+* [x] Linux
+* [ ] MacOS
+* [x] Windows
+
+> I dont't have apple device so it's hard for iOS and MacOS.
+> Feel free to PR if you would like to help for this!
 
 ### Format support
 
