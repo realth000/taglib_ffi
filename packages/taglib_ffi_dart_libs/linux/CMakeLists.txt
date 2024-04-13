@@ -45,7 +45,10 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
 # This list could contain prebuilt libraries, or libraries created by an
 # external build triggered from this build file.
 set(taglib_ffi_dart_libs_bundled_libraries
-  ""
+  "${CMAKE_CURRENT_SOURCE_DIR}/libtag.so.2.0.1"
+  "${CMAKE_CURRENT_SOURCE_DIR}/libtag.so.2"
+  "${CMAKE_CURRENT_SOURCE_DIR}/libtag.so"
+  "${CMAKE_CURRENT_SOURCE_DIR}/libtaglib_ffi.so"
   PARENT_SCOPE
 )
 

@@ -35,10 +35,6 @@ if [ "x${NDK_ROOT}" == "x" ];then
 	exit 1
 fi
 
-if [ -d ${SAVE_ROOT} ];then
-	rm -rf ${SAVE_ROOT}/*
-fi
-
 if [ ! -d "${BUILD_ROOT}" ];then
 	mkdir -p "${BUILD_ROOT}"
 fi

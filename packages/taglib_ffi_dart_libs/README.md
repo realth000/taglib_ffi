@@ -2,5 +2,5 @@
 
 Built libs for taglib_ffi_dart
 
-**Now this package is for testing Android platform only**
+**Now this package is for testing Android and Linux platform only**
 
