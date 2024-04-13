@@ -53,11 +53,10 @@ class Metadata {
 * [x] Android
 * [ ] iOS
 * [x] Linux
-* [ ] MacOS
-* [x] Windows
+* [ ] macOS
+* [ ] Windows (coming soon)
 
-> I dont't have apple device so it's hard for iOS and MacOS.
-> Feel free to PR if you would like to help for this!
+> I don't have Apple device, feel free to PR if you would like to help for this!
 
 ### Format support
 
@@ -90,13 +89,17 @@ class Metadata {
   * [ ] Multiple images with type
 * [ ] Custom tags
 
-### Deploy
+### Install
 
-* [x] Auto bundle on Windows/Linux.
-  * Add taglib_ffi to `pubspec.yaml` then `*.so`/`*.dll`s are automatically bundled with your app.
-* [x] Manually build and bundle on Android.
-  * See [Build from source](#Build-from-source).
-* [ ] Auto bundle on Android.
+Add `taglib_ffi_dart` and `taglib_ffi_dart_libs` to `pubspec.yaml` as dependencies.
+
+Use packages hosted on pub:
+
+```yaml
+dependencies:
+  taglib_ffi_dart: current_version
+  taglib_ffi_dart_libs: current_version
+```
 
 ## Build from source
 
@@ -121,47 +124,25 @@ dart run ffigen --config ffigen.yaml
 ### Android
 
 ```bash
-# Export env, NDK is required.
+# Export env, SDK and NDK are required.
 export ANDROID_HOME=/path/to/Android/SDK
 
-# Build *.so and save somewhere.
-./scripts/build_android.sh /path/to/save/built/libs
+cd packages
+
+# Build and save libs
+./taglib_ffi_dart/scripts/build_android.sh ./taglib_ffi_dart_libs/android/src/main/jniLibs
 ```
 
-After running `build_android.sh`, all `*.so` are saved in:
-
-```
-/your_save_directory
-├── arm64-v8a
-│   ├── libtaglib_ffi.so
-│   └── libtag.so
-├── armeabi-v7a
-│   ├── libtaglib_ffi.so
-│   └── libtag.so
-├── x86
-│   ├── libtaglib_ffi.so
-│   └── libtag.so
-└── x86_64
-    ├── libtaglib_ffi.so
-    └── libtag.so
-```
-
-Copy the save directory to the app's `android/src/main/jniLibs` directory.
+After that, libs are automatically bundled with app.
 
 ### Linux
 
+```bash
+./taglib_ffi_dart/scripts/build_linux.sh ./taglib_ffi_dart_libs/linux
 ```
-# After add to pubspec.yaml
-flutter build linux
-```
+
+After that, libs are automatically bundled with app.
 
 ### Windows
 
-```
-# After add to pubspec.yaml
-flutter build windows
-```
-
-* For Windows and Linux, just run `flutter build windows` or `flutter build linux`.
-* For Windows
-* For Linux, when failed to find header files, export the variable:
+TODO
