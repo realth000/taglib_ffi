@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  taglib_ffi_dart_libs
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
