@@ -107,7 +107,7 @@ class _TagLib {
 /// Read auto metadata from given [filePath].
 ///
 /// Return null if file not found or failed to load data.
-Future<Metadata?> readMetadata(String filePath) async { 
+Future<Metadata?> readMetadata(String filePath) async {
   return _taglib.readMetadata(filePath);
 }
 

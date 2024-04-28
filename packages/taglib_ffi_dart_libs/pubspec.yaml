@@ -2,7 +2,7 @@ name: taglib_ffi_dart_libs
 description: "Libs for taglib_ffi_dart to integrate taglib with your app. See taglib_ffi_dart for details."
 version: 0.0.3
 homepage: https://github.com/realth000/taglib_ffi
-repository: https://github.com/realth000/taglib_ffi
+repository: https://github.com/realth000/taglib_ffi/tree/master/packages/taglib_ffi_dart_libs
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
