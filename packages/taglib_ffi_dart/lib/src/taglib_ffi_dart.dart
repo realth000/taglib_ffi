@@ -14,6 +14,7 @@ import 'taglib_ffi_bindings_generated.dart';
 class Metadata {
   /// Constructor.
   Metadata({
+    required this.filePath,
     required this.title,
     required this.artist,
     required this.album,
@@ -31,6 +32,7 @@ class Metadata {
     this.albumCover,
   });
 
+  final String filePath;
   final String? title;
   final String? artist;
   final String? album;
@@ -145,6 +147,7 @@ Future<Metadata?> _readMetadata(String filePath) async {
 
     final id3v2Tag = originalTag.cast<ID3v2Tag>().ref;
     final metaData = Metadata(
+      filePath: filePath,
       title: id3v2Tag.title.cast<Utf8>().toDartString(),
       artist: id3v2Tag.artist.cast<Utf8>().toDartString(),
       album: id3v2Tag.albumTitle.cast<Utf8>().toDartString(),
