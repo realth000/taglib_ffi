@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
@@ -9,7 +8,7 @@ import 'package:isolate_pool_2/isolate_pool_2.dart';
 
 import 'taglib_ffi_bindings_generated.dart';
 
-/// Audio metada data class.
+/// Audio metadata data class.
 ///
 /// Holding all metadata types and values.
 class Metadata {
@@ -53,7 +52,7 @@ late final _TagLib _taglib;
 
 var _initialized = false;
 
-/// Initialize talibg_ffi_dart package.
+/// Initialize taglib_ffi_dart package.
 Future<void> initialize({int? isolateCount}) async {
   if (_initialized) {
     return;
@@ -80,9 +79,7 @@ class _ReadMetadataJob extends PooledJob<Metadata?> {
     if (filePath.isEmpty) {
       return null;
     }
-    final p = ReceivePort();
-    Isolate.spawn(_readMetadata, <dynamic>[p.sendPort, filePath]);
-    return await p.first;
+    return _readMetadata(filePath);
   }
 }
 
@@ -130,9 +127,7 @@ Future<List<Metadata>?> readMetadataFromDir(String dirPath) async {
   return _taglib.readMetadataFromDir(dirPath);
 }
 
-Future<dynamic> _readMetadata(List<dynamic> params) async {
-  final p = params[0] as SendPort;
-  final filePath = params[1] as String;
+Future<Metadata?> _readMetadata(String filePath) async {
   Pointer<ID3v2Tag> originalTag = nullptr;
   late final TaglibFfiBindings meipuru;
   try {
@@ -145,7 +140,7 @@ Future<dynamic> _readMetadata(List<dynamic> params) async {
     originalTag = meipuru.readID3v2Tag(tagFileName);
     if (originalTag.address == nullptr.address) {
       print('FFI returned nullptr in meipuru.MeipuruReadID3v2Tag');
-      return Isolate.exit(p);
+      return null;
     }
 
     final id3v2Tag = originalTag.cast<ID3v2Tag>().ref;
@@ -184,12 +179,12 @@ Future<dynamic> _readMetadata(List<dynamic> params) async {
             : null
        */
     meipuru.freeID3v2Tag(originalTag);
-    return Isolate.exit(p, metaData);
+    return metaData;
   } catch (e) {
     if (originalTag != nullptr) {
       meipuru.freeID3v2Tag(originalTag);
     }
     print('Error in readMetadataEx: $e');
-    return Isolate.exit(p, null);
+    return null;
   }
 }
