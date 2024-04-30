@@ -100,7 +100,22 @@ class _TagLib {
   late final IsolatePool pool;
 
   Future<Metadata?> readMetadata(String filePath) async {
-    return pool.scheduleJob(_ReadMetadataJob(filePath));
+    return pool.scheduleJob<Metadata>(_ReadMetadataJob(filePath));
+  }
+
+  Future<List<Metadata>?> readMetadataFromDir(String dirPath) async {
+    final dir = Directory(dirPath);
+    if (!dir.existsSync()) {
+      return [];
+    }
+
+    final tasks = await dir
+        .list(recursive: true)
+        .where((e) => e.path.endsWith('.mp3'))
+        .map((e) async => pool.scheduleJob<Metadata>(_ReadMetadataJob(e.path)))
+        .toList();
+    final data = Future.wait(tasks);
+    return data;
   }
 }
 
@@ -109,6 +124,10 @@ class _TagLib {
 /// Return null if file not found or failed to load data.
 Future<Metadata?> readMetadata(String filePath) async {
   return _taglib.readMetadata(filePath);
+}
+
+Future<List<Metadata>?> readMetadataFromDir(String dirPath) async {
+  return _taglib.readMetadataFromDir(dirPath);
 }
 
 Future<dynamic> _readMetadata(List<dynamic> params) async {
