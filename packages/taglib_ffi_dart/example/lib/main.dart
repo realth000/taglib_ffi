@@ -125,9 +125,9 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       allMetadata = metadataList;
       loadingFromDir = false;
     });
-    debugPrint('metadata: length is ${allMetadata.length}');
     final end = DateTime.now();
-    debugPrint('elapsed: ${end.difference(start)}');
+    debugPrint('metadata: loaded ${allMetadata.length} in '
+        '${end.difference(start)} seconds');
   }
 
   Widget _buildFileTab(BuildContext context) {
@@ -249,8 +249,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       itemBuilder: (context, index) {
         final item = allMetadata[index];
         return ListTile(
-          // leading:
-          //     item.albumCover != null ? Image.memory(item.albumCover!) : null,
+          leading:
+              item.albumCover != null ? Image.memory(item.albumCover!) : null,
           title: Text(item.title ?? ''),
           subtitle: Text('${item.artist ?? ""} : ${item.album ?? ""}'),
           trailing: Text('$index'),

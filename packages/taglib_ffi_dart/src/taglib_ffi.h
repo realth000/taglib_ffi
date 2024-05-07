@@ -64,7 +64,10 @@ typedef struct {
   int lengthInMilliSeconds;
   const char *lyrics;
   unsigned long lyricsLength;
-  const char *albumCover;
+  // use uint8_t
+  // refer:
+  // https://github.com/folksable/blurhash_ffi/blob/main/src/blurhash_ffi.h
+  uint8_t *albumCover;
   unsigned int albumCoverLength;
   // The `_owner` field is an internal member who really owns the strings in
   // current `Tag`. DO NOT MODIFY it except free;

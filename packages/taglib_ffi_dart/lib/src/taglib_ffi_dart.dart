@@ -143,14 +143,12 @@ Future<Metadata?> _readMetadata(String filePath) async {
     );
     final Pointer<Char> tagFileName = filePath.toNativeUtf8().cast();
     originalTag = meipuru.readID3v2Tag(tagFileName);
-    if (originalTag.address == nullptr.address) {
+    if (originalTag == nullptr) {
       print('FFI returned nullptr in meipuru.MeipuruReadID3v2Tag');
       return null;
     }
 
-    final id3v2Tag = originalTag.cast<ID3v2Tag>().ref;
-    print(
-        '[taglib_ffi_dart][dart]: album cover length: ${id3v2Tag.albumCoverLength}');
+    final id3v2Tag = originalTag.ref;
     final metaData = Metadata(
       filePath: filePath,
       title: id3v2Tag.title.cast<Utf8>().toDartString(),
@@ -168,26 +166,20 @@ Future<Metadata?> _readMetadata(String filePath) async {
       albumArtist: id3v2Tag.albumArtist.cast<Utf8>().toDartString(),
       albumTotalTrack: id3v2Tag.albumTotalTrack,
       lyrics: null,
-      albumCover: id3v2Tag.albumCoverLength > 0
-          ? id3v2Tag.albumCover
-              .cast<Uint8>()
-              .asTypedList(id3v2Tag.albumCoverLength)
+      albumCover: id3v2Tag.albumCoverLength > 0 &&
+              id3v2Tag.albumCover != nullptr
+          // As mentioned in `asTypedList`'s comment, the created `Uint8List`
+          // is only a view of the background data. Caller need to ensure the
+          // data behind is available when using the converted `Uint8List`
+          // instance.
+          //
+          // But we want to free the c-side memory immediately after finish
+          // reading the data.
+          // So copy a list here to let us free the backend data asap.
+          ? Uint8List.fromList(
+              id3v2Tag.albumCover.asTypedList(id3v2Tag.albumCoverLength))
           : null,
-      // albumCover: null,
     );
-    /*
-      id3v2Tag.lyricsLength > 0
-            ? id3v2Tag.lyrics
-                .cast<Utf8>()
-                .toDartString(length: id3v2Tag.lyricsLength)
-            : null
-
-       id3v2Tag.albumCoverLength > 0
-            ? id3v2Tag.albumCover
-                .cast<Uint8>()
-                .asTypedList(id3v2Tag.albumCoverLength)
-            : null
-       */
     meipuru.freeID3v2Tag(originalTag);
     return metaData;
   } catch (e) {

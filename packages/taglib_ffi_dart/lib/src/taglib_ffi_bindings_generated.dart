@@ -192,7 +192,10 @@ final class ID3v2Tag extends ffi.Struct {
   @ffi.UnsignedLong()
   external int lyricsLength;
 
-  external ffi.Pointer<ffi.Char> albumCover;
+  /// use uint8_t
+  /// refer:
+  /// https://github.com/folksable/blurhash_ffi/blob/main/src/blurhash_ffi.h
+  external ffi.Pointer<ffi.Uint8> albumCover;
 
   @ffi.UnsignedInt()
   external int albumCoverLength;

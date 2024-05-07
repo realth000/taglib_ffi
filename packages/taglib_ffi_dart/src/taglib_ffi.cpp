@@ -59,7 +59,7 @@ FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath) {
       id3v2Tag->lengthInMilliseconds,
       id3v2Tag->lyrics.c_str(),
       (unsigned long)(id3v2Tag->lyricsLength),
-      id3v2Tag->albumCover->data.data(),
+      (uint8_t *)id3v2Tag->albumCover->data.data(),
       id3v2Tag->albumCover->size,
       id3v2Tag,
   };
