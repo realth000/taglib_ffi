@@ -6,13 +6,13 @@
 
 namespace Meipuru {
 class ID3v2Tag : public BaseTag {
- public:
+public:
   void print() override;
 
-  Util::Picture albumCover;
+  std::unique_ptr<Util::Picture> albumCover;
   std::string lyrics;
   size_t lyricsLength;
 };
-}  // namespace Meipuru
+} // namespace Meipuru
 
-#endif  // MEIPURU_ID3V2TAG_H
+#endif // MEIPURU_ID3V2TAG_H

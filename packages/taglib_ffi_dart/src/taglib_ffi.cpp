@@ -7,7 +7,7 @@ FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath) {
 
   auto tag = reader.readTagFromFile(filePath);
 
-  // The data in `tag` is also implictly "borrowed" by `meipuruTag`.
+  // The data in `tag` is also implicitly "borrowed" by `meipuruTag`.
   auto *meipuruTag = new Tag{
       tag->filePath.c_str(),
       tag->fileName.c_str(),
@@ -23,13 +23,14 @@ FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath) {
       tag->bitRate,
       tag->sampleRate,
       tag->channels,
-      tag->length,
+      tag->lengthInSeconds,
+      tag->lengthInMilliseconds,
+      tag,
   };
-  meipuruTag->_owner = tag;
   return meipuruTag;
 }
 
-FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath) {
+FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath) {
   auto reader = Meipuru::MeipuruReader();
   auto id3v2Tag = reader.readID3v2TagFromFile(filePath);
 
@@ -37,7 +38,8 @@ FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath) {
     return nullptr;
   }
 
-  // The data in `id3v2Tag` is also implictly "borrowed" by `meipuruID3v2Tag`.
+  // The data in `id3v2Tag` is also implicitly "borrowed" by
+  // `meipuruID3v2Tag`.
   auto *meipuruID3v2Tag = new ID3v2Tag{
       id3v2Tag->filePath.c_str(),
       id3v2Tag->fileName.c_str(),
@@ -53,13 +55,14 @@ FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath) {
       id3v2Tag->bitRate,
       id3v2Tag->sampleRate,
       id3v2Tag->channels,
-      id3v2Tag->length,
+      id3v2Tag->lengthInSeconds,
+      id3v2Tag->lengthInMilliseconds,
       id3v2Tag->lyrics.c_str(),
       (unsigned long)(id3v2Tag->lyricsLength),
-      id3v2Tag->albumCover.data.data(),
-      id3v2Tag->albumCover.size,
+      id3v2Tag->albumCover->data.data(),
+      id3v2Tag->albumCover->size,
+      id3v2Tag,
   };
-  meipuruID3v2Tag->_owner = id3v2Tag;
   return meipuruID3v2Tag;
 }
 
@@ -93,7 +96,9 @@ FFI_PLUGIN_EXPORT void printID3v2Tag(ID3v2Tag *id3V2Tag) {
             << "Bit Rate: " << id3V2Tag->bitRate << "\n"
             << "Sample Rate: " << id3V2Tag->sampleRate << "\n"
             << "Channels: " << id3V2Tag->channels << "\n"
-            << "Length: " << id3V2Tag->length
+            << "LengthInSeconds: " << id3V2Tag->lengthInSeconds << "\n"
+            << "LengthInMilliseconds: " << id3V2Tag->lengthInMilliSeconds
+            << "\n"
             << "Album Cover (size): " << id3V2Tag->albumCoverLength << "\n"
             << "Lyrics (size): " << id3V2Tag->lyricsLength << std::endl;
 }

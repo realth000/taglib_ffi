@@ -5,7 +5,8 @@
 
 namespace Meipuru {
 class BaseTag {
- public:
+public:
+  virtual ~BaseTag() = default;
   virtual void print();
 
   std::string filePath;
@@ -22,8 +23,9 @@ class BaseTag {
   int bitRate;
   int sampleRate;
   int channels;
-  int length;
+  int lengthInSeconds;
+  int lengthInMilliseconds;
 };
-}  // namespace Meipuru
+} // namespace Meipuru
 
-#endif  // MEIPURU_BASETAG_H
+#endif // MEIPURU_BASETAG_H

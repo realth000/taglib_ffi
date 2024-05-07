@@ -25,7 +25,8 @@ class Metadata {
     required this.sampleRate,
     required this.bitrate,
     required this.channels,
-    required this.length,
+    required this.lengthInSeconds,
+    required this.lengthInMilliseconds,
     this.albumArtist,
     this.albumTotalTrack,
     this.lyrics,
@@ -45,7 +46,8 @@ class Metadata {
   final int? sampleRate;
   final int? bitrate;
   final int? channels;
-  final int? length;
+  final int? lengthInSeconds;
+  final int? lengthInMilliseconds;
   final String? lyrics;
   final Uint8List? albumCover;
 }
@@ -114,6 +116,7 @@ class _TagLib {
         .map((e) async => pool.scheduleJob<Metadata>(_ReadMetadataJob(e.path)))
         .toList();
     final data = Future.wait(tasks);
+
     return data;
   }
 }
@@ -146,6 +149,8 @@ Future<Metadata?> _readMetadata(String filePath) async {
     }
 
     final id3v2Tag = originalTag.cast<ID3v2Tag>().ref;
+    print(
+        '[taglib_ffi_dart][dart]: album cover length: ${id3v2Tag.albumCoverLength}');
     final metaData = Metadata(
       filePath: filePath,
       title: id3v2Tag.title.cast<Utf8>().toDartString(),
@@ -158,7 +163,8 @@ Future<Metadata?> _readMetadata(String filePath) async {
       sampleRate: id3v2Tag.sampleRate,
       bitrate: id3v2Tag.bitRate,
       channels: id3v2Tag.channels,
-      length: id3v2Tag.length,
+      lengthInSeconds: id3v2Tag.lengthInSeconds,
+      lengthInMilliseconds: id3v2Tag.lengthInMilliSeconds,
       albumArtist: id3v2Tag.albumArtist.cast<Utf8>().toDartString(),
       albumTotalTrack: id3v2Tag.albumTotalTrack,
       lyrics: null,
@@ -167,6 +173,7 @@ Future<Metadata?> _readMetadata(String filePath) async {
               .cast<Uint8>()
               .asTypedList(id3v2Tag.albumCoverLength)
           : null,
+      // albumCover: null,
     );
     /*
       id3v2Tag.lyricsLength > 0

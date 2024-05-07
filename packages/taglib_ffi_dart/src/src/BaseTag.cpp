@@ -18,6 +18,7 @@ void BaseTag::print() {
             << "Bit Rate: " << bitRate << "\n"
             << "Sample Rate: " << sampleRate << "\n"
             << "Channels: " << channels << "\n"
-            << "Length: " << length << std::endl;
+            << "LengthInSeconds: " << lengthInSeconds << "\n"
+            << "lengthInMilliseconds: " << lengthInMilliseconds << std::endl;
 }
-}  // namespace Meipuru
+} // namespace Meipuru

@@ -94,7 +94,9 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       bitrateC.text = metaData.bitrate == 0 ? '' : metaData.bitrate.toString();
       channelsC.text =
           metaData.channels == 0 ? '' : metaData.channels.toString();
-      lengthC.text = metaData.length == 0 ? '' : metaData.length.toString();
+      lengthC.text = metaData.lengthInSeconds == 0
+          ? ''
+          : metaData.lengthInSeconds.toString();
       lyricsC.text = metaData.lyrics ?? '';
       albumCoverData = metaData.albumCover;
     });
@@ -247,8 +249,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       itemBuilder: (context, index) {
         final item = allMetadata[index];
         return ListTile(
-          leading:
-              item.albumCover != null ? Image.memory(item.albumCover!) : null,
+          // leading:
+          //     item.albumCover != null ? Image.memory(item.albumCover!) : null,
           title: Text(item.title ?? ''),
           subtitle: Text('${item.artist ?? ""} : ${item.album ?? ""}'),
           trailing: Text('$index'),

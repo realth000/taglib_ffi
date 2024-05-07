@@ -1,7 +1,6 @@
 // ignore_for_file: always_specify_types
 // ignore_for_file: camel_case_types
 // ignore_for_file: non_constant_identifier_names
-// ignore_for_file: unused_field
 
 // AUTO GENERATED FILE, DO NOT EDIT.
 //
@@ -137,7 +136,10 @@ final class Tag extends ffi.Struct {
   external int channels;
 
   @ffi.Int()
-  external int length;
+  external int lengthInSeconds;
+
+  @ffi.Int()
+  external int lengthInMilliseconds;
 
   /// The `_owner` field is an internal member who really owns the strings in
   /// current `Tag`. DO NOT MODIFY it except free;
@@ -180,7 +182,10 @@ final class ID3v2Tag extends ffi.Struct {
   external int channels;
 
   @ffi.Int()
-  external int length;
+  external int lengthInSeconds;
+
+  @ffi.Int()
+  external int lengthInMilliSeconds;
 
   external ffi.Pointer<ffi.Char> lyrics;
 

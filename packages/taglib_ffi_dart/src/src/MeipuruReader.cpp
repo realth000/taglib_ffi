@@ -43,18 +43,18 @@ bool MeipuruReader::fetchBaseTag(const TagLib::File *file,
     return false;
   }
   const bool useUnicode = option.useUnicode();
-  baseTag->title = std::move(tag->title().to8Bit(useUnicode));
-  baseTag->artist = std::move(tag->artist().to8Bit(useUnicode));
-  baseTag->albumTitle = std::move(tag->album().to8Bit(useUnicode));
+  baseTag->title = tag->title().to8Bit(useUnicode);
+  baseTag->artist = tag->artist().to8Bit(useUnicode);
+  baseTag->albumTitle = tag->album().to8Bit(useUnicode);
   baseTag->year = tag->year();
   baseTag->track = tag->track();
-  baseTag->genre = std::move(tag->genre().to8Bit(useUnicode));
-  baseTag->comment = std::move(tag->comment().to8Bit(useUnicode));
+  baseTag->genre = tag->genre().to8Bit(useUnicode);
+  baseTag->comment = tag->comment().to8Bit(useUnicode);
 
   const auto propertyMap = file->properties();
   // TODO: albumArtist is TagLib::string, should be std::string types.
   baseTag->albumArtist =
-      std::move(propertyMap["ALBUMARTIST"].toString().to8Bit(useUnicode));
+      propertyMap["ALBUMARTIST"].toString().to8Bit(useUnicode);
   const auto trackNumberString = propertyMap["TRACKNUMBER"].toString();
   if (!trackNumberString.isEmpty()) {
     const auto pos = trackNumberString.split("/");
@@ -75,12 +75,14 @@ bool MeipuruReader::fetchBaseTag(const TagLib::File *file,
     baseTag->bitRate = audioProperties->bitrate();
     baseTag->sampleRate = audioProperties->sampleRate();
     baseTag->channels = audioProperties->channels();
-    baseTag->length = audioProperties->lengthInSeconds();
+    baseTag->lengthInSeconds = audioProperties->lengthInSeconds();
+    baseTag->lengthInMilliseconds = audioProperties->lengthInMilliseconds();
   } else {
     baseTag->bitRate = 0;
     baseTag->sampleRate = 0;
     baseTag->channels = 0;
-    baseTag->length = 0;
+    baseTag->lengthInSeconds = 0;
+    baseTag->lengthInMilliseconds = 0;
   }
   return true;
 }
@@ -113,31 +115,29 @@ ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath) {
   if (!frameListMap["USLT"].isEmpty() &&
       frameListMap["USLT"].front() != nullptr) {
     const auto lyricString =
-        std::move(frameListMap["USLT"].front()->toString().to8Bit(useUnicode));
+        frameListMap["USLT"].front()->toString().to8Bit(useUnicode);
     retTag->lyricsLength = lyricString.length();
     retTag->lyrics = lyricString;
   } else {
     retTag->lyrics = "";
+    retTag->lyricsLength = 0;
   }
   if (!frameListMap["APIC"].isEmpty()) {
     auto albumCover = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(
         frameListMap["APIC"].front());
     if (albumCover != nullptr && albumCover->picture().size() > 0) {
-      retTag->albumCover.size = albumCover->picture().size();
-      retTag->albumCover.data = albumCover->picture();
-      retTag->albumCover.mimetype =
-          std::move(albumCover->mimeType().to8Bit(option.useUnicode()));
+      Util::Picture picture = {};
+      picture.size = albumCover->picture().size();
+      picture.data.append(albumCover->picture());
+      picture.mimetype = albumCover->mimeType().to8Bit(option.useUnicode());
+      retTag->albumCover = std::make_unique<Util::Picture>(picture);
     } else {
-      retTag->albumCover.data = TagLib::ByteVector();
-      retTag->albumCover.size = 0;
-      retTag->albumCover.mimetype = "";
+      retTag->albumCover = std::make_unique<Util::Picture>();
     }
   } else {
-    retTag->albumCover.data = TagLib::ByteVector();
-    retTag->albumCover.size = 0;
-    retTag->albumCover.mimetype = "";
+    retTag->albumCover = std::make_unique<Util::Picture>();
   }
   return retTag;
 }
 
-}  // namespace Meipuru
+} // namespace Meipuru

@@ -38,7 +38,8 @@ typedef struct {
   int bitRate;
   int sampleRate;
   int channels;
-  int length;
+  int lengthInSeconds;
+  int lengthInMilliseconds;
   // The `_owner` field is an internal member who really owns the strings in
   // current `Tag`. DO NOT MODIFY it except free;
   void *_owner;
@@ -59,7 +60,8 @@ typedef struct {
   int bitRate;
   int sampleRate;
   int channels;
-  int length;
+  int lengthInSeconds;
+  int lengthInMilliSeconds;
   const char *lyrics;
   unsigned long lyricsLength;
   const char *albumCover;
@@ -71,7 +73,7 @@ typedef struct {
 
 FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath);
 
-FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(char *filePath);
+FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath);
 
 FFI_PLUGIN_EXPORT void freeTag(const Tag *tag);
 
