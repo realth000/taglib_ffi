@@ -119,6 +119,17 @@ class _TagLib {
 
     return data;
   }
+
+  Stream<Future<Metadata>> readMetadataStreamFromDir(String dirPath) async* {
+    final dir = Directory(dirPath);
+    if (!dir.existsSync()) {
+      return;
+    }
+    yield* dir
+        .list(recursive: true)
+        .where((e) => e.path.endsWith('.mp3'))
+        .map((e) async => pool.scheduleJob<Metadata>(_ReadMetadataJob(e.path)));
+  }
 }
 
 /// Read auto metadata from given [filePath].
@@ -130,6 +141,10 @@ Future<Metadata?> readMetadata(String filePath) async {
 
 Future<List<Metadata>?> readMetadataFromDir(String dirPath) async {
   return _taglib.readMetadataFromDir(dirPath);
+}
+
+Stream<Future<Metadata>> readMetadataStreamFromDir(String dirPath) async* {
+  yield* _taglib.readMetadataStreamFromDir(dirPath);
 }
 
 Future<Metadata?> _readMetadata(String filePath) async {
