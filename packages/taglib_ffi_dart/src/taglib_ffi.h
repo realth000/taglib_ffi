@@ -1,6 +1,7 @@
 #pragma once
 
 /////////
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,7 +77,7 @@ typedef struct {
 
 FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath);
 
-FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath);
+FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath, bool readImage);
 
 FFI_PLUGIN_EXPORT void freeTag(const Tag *tag);
 

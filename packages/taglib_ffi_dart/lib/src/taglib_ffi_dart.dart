@@ -74,16 +74,18 @@ void checkInitialization() {
 }
 
 class _ReadMetadataJob extends PooledJob<Metadata?> {
-  _ReadMetadataJob(this.filePath);
+  _ReadMetadataJob(this.filePath, this.readImage);
 
   final String filePath;
+
+  final bool readImage;
 
   @override
   Future<Metadata?> job() async {
     if (filePath.isEmpty) {
       return null;
     }
-    return _readMetadata(filePath);
+    return _readMetadata(filePath, readImage);
   }
 }
 
@@ -100,11 +102,17 @@ class _TagLib {
   late final int isolateCount;
   late final IsolatePool pool;
 
-  Future<Metadata?> readMetadata(String filePath) async {
-    return pool.scheduleJob<Metadata>(_ReadMetadataJob(filePath));
+  Future<Metadata?> readMetadata(
+    String filePath, {
+    bool readImage = true,
+  }) async {
+    return pool.scheduleJob<Metadata>(_ReadMetadataJob(filePath, readImage));
   }
 
-  Future<List<Metadata>?> readMetadataFromDir(String dirPath) async {
+  Future<List<Metadata>?> readMetadataFromDir(
+    String dirPath, {
+    bool readImage = true,
+  }) async {
     final dir = Directory(dirPath);
     if (!dir.existsSync()) {
       return [];
@@ -113,22 +121,30 @@ class _TagLib {
     final tasks = await dir
         .list(recursive: true)
         .where((e) => e.path.endsWith('.mp3'))
-        .map((e) async => pool.scheduleJob<Metadata>(_ReadMetadataJob(e.path)))
+        .map((e) async =>
+            pool.scheduleJob<Metadata>(_ReadMetadataJob(e.path, readImage)))
         .toList();
     final data = Future.wait(tasks);
 
     return data;
   }
 
-  Stream<Future<Metadata>> readMetadataStreamFromDir(String dirPath) async* {
+  Stream<Future<Metadata>> readMetadataStreamFromDir(
+    String dirPath,
+    bool readImage,
+  ) async* {
     final dir = Directory(dirPath);
     if (!dir.existsSync()) {
       return;
     }
-    yield* dir
-        .list(recursive: true)
-        .where((e) => e.path.endsWith('.mp3'))
-        .map((e) async => pool.scheduleJob<Metadata>(_ReadMetadataJob(e.path)));
+    yield* dir.list(recursive: true).where((e) => e.path.endsWith('.mp3')).map(
+          (e) async => pool.scheduleJob<Metadata>(
+            _ReadMetadataJob(
+              e.path,
+              readImage,
+            ),
+          ),
+        );
   }
 }
 
@@ -143,11 +159,14 @@ Future<List<Metadata>?> readMetadataFromDir(String dirPath) async {
   return _taglib.readMetadataFromDir(dirPath);
 }
 
-Stream<Future<Metadata>> readMetadataStreamFromDir(String dirPath) async* {
-  yield* _taglib.readMetadataStreamFromDir(dirPath);
+Stream<Future<Metadata>> readMetadataStreamFromDir(
+  String dirPath, {
+  bool readImage = true,
+}) async* {
+  yield* _taglib.readMetadataStreamFromDir(dirPath, readImage);
 }
 
-Future<Metadata?> _readMetadata(String filePath) async {
+Future<Metadata?> _readMetadata(String filePath, bool readImage) async {
   Pointer<ID3v2Tag> originalTag = nullptr;
   late final TaglibFfiBindings meipuru;
   try {
@@ -157,7 +176,7 @@ Future<Metadata?> _readMetadata(String filePath) async {
           : DynamicLibrary.open('libtaglib_ffi.so'),
     );
     final Pointer<Char> tagFileName = filePath.toNativeUtf8().cast();
-    originalTag = meipuru.readID3v2Tag(tagFileName);
+    originalTag = meipuru.readID3v2Tag(tagFileName, readImage);
     if (originalTag == nullptr) {
       print('FFI returned nullptr in meipuru.MeipuruReadID3v2Tag');
       return null;

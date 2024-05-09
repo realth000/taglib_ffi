@@ -6,7 +6,7 @@
 namespace fs = std::filesystem;
 
 void printFileMetadata(std::string_view filePath) {
-  const ID3v2Tag *fp = readID3v2Tag(filePath.data());
+  const ID3v2Tag *fp = readID3v2Tag(filePath.data(), true);
   if (!fp) {
     std::cout << "failed to read " << filePath << std::endl;
     return;

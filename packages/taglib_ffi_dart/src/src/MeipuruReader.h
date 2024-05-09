@@ -11,7 +11,7 @@
 
 namespace Meipuru {
 class MeipuruReaderOption {
- public:
+public:
   explicit MeipuruReaderOption();
 
   [[nodiscard]] bool useUnicode() const;
@@ -19,23 +19,23 @@ class MeipuruReaderOption {
   Util::Encoding encoding;
   Util::LogLevel logLevel;
 
- private:
+private:
   bool unicode;
 };
 
 class MeipuruReader {
- public:
+public:
   explicit MeipuruReader(
       const MeipuruReaderOption &meipuruReaderOption = MeipuruReaderOption());
 
   BaseTag *readTagFromFile(const char *filePath);
-  ID3v2Tag *readID3v2TagFromFile(const char *filePath);
+  ID3v2Tag *readID3v2TagFromFile(const char *filePath, bool readImage);
 
- private:
+private:
   bool fetchBaseTag(const TagLib::File *file, BaseTag *baseTag) const;
 
   MeipuruReaderOption option;
 };
-}  // namespace Meipuru
+} // namespace Meipuru
 
-#endif  // MEIPURU_MEIPURUREADER_H
+#endif // MEIPURU_MEIPURUREADER_H

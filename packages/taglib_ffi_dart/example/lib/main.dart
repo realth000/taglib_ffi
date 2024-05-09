@@ -117,7 +117,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       loadingFromDir = true;
     });
 
-    final metadataStream = taglib.readMetadataStreamFromDir(result);
+    final metadataStream =
+        taglib.readMetadataStreamFromDir(result, readImage: false);
     final metadataList = await metadataStream.asyncMap((e) async {
       final metadata = await e;
       setState(() {

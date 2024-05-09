@@ -30,9 +30,9 @@ FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath) {
   return meipuruTag;
 }
 
-FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath) {
+FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath, bool readImage) {
   auto reader = Meipuru::MeipuruReader();
-  auto id3v2Tag = reader.readID3v2TagFromFile(filePath);
+  auto id3v2Tag = reader.readID3v2TagFromFile(filePath, readImage);
 
   if (id3v2Tag == nullptr) {
     return nullptr;
@@ -59,10 +59,14 @@ FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath) {
       id3v2Tag->lengthInMilliseconds,
       id3v2Tag->lyrics.c_str(),
       (unsigned long)(id3v2Tag->lyricsLength),
-      (uint8_t *)id3v2Tag->albumCover->data.data(),
-      id3v2Tag->albumCover->size,
+      nullptr,
+      0,
       id3v2Tag,
   };
+  if (readImage) {
+    meipuruID3v2Tag->albumCover = (uint8_t *)id3v2Tag->albumCover->data.data();
+    meipuruID3v2Tag->albumCoverLength = id3v2Tag->albumCover->size;
+  }
   return meipuruID3v2Tag;
 }
 

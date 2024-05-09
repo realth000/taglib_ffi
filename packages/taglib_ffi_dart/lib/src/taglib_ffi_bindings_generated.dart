@@ -43,18 +43,20 @@ class TaglibFfiBindings {
 
   ffi.Pointer<ID3v2Tag> readID3v2Tag(
     ffi.Pointer<ffi.Char> filePath,
+    bool readImage,
   ) {
     return _readID3v2Tag(
       filePath,
+      readImage,
     );
   }
 
   late final _readID3v2TagPtr = _lookup<
       ffi.NativeFunction<
           ffi.Pointer<ID3v2Tag> Function(
-              ffi.Pointer<ffi.Char>)>>('readID3v2Tag');
-  late final _readID3v2Tag = _readID3v2TagPtr
-      .asFunction<ffi.Pointer<ID3v2Tag> Function(ffi.Pointer<ffi.Char>)>();
+              ffi.Pointer<ffi.Char>, ffi.Bool)>>('readID3v2Tag');
+  late final _readID3v2Tag = _readID3v2TagPtr.asFunction<
+      ffi.Pointer<ID3v2Tag> Function(ffi.Pointer<ffi.Char>, bool)>();
 
   void freeTag(
     ffi.Pointer<Tag> tag,

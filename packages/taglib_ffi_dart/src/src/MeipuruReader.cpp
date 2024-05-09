@@ -87,7 +87,8 @@ bool MeipuruReader::fetchBaseTag(const TagLib::File *file,
   return true;
 }
 
-ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath) {
+ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath,
+                                              bool readImage) {
   TagLib::MPEG::File mpegFile(filePath);
   if (!mpegFile.isValid()) {
     return nullptr;
@@ -122,7 +123,7 @@ ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath) {
     retTag->lyrics = "";
     retTag->lyricsLength = 0;
   }
-  if (!frameListMap["APIC"].isEmpty()) {
+  if (readImage && !frameListMap["APIC"].isEmpty()) {
     auto albumCover = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(
         frameListMap["APIC"].front());
     if (albumCover != nullptr && albumCover->picture().size() > 0) {
