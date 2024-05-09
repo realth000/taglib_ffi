@@ -37,6 +37,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   bool loadingFromDir = false;
 
+  String currentScanningFile = '';
+
   List<taglib.Metadata> allMetadata = [];
 
   @override
@@ -100,6 +102,40 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       lyricsC.text = metaData.lyrics ?? '';
       albumCoverData = metaData.albumCover;
     });
+  }
+
+  Future<void> readMetadataStreamFromDir() async {
+    final result = await FilePicker.platform.getDirectoryPath();
+    if (result == null) {
+      debugPrint('dir path not selected');
+      return;
+    }
+
+    final start = DateTime.now();
+    debugPrint('scanning metadata stream in $result');
+    setState(() {
+      loadingFromDir = true;
+    });
+
+    final metadataStream = taglib.readMetadataStreamFromDir(result);
+    final metadataList = await metadataStream.asyncMap((e) async {
+      final metadata = await e;
+      setState(() {
+        currentScanningFile = metadata.filePath;
+      });
+      return metadata;
+    }).toList();
+
+    setState(() {
+      allMetadata = metadataList;
+      loadingFromDir = false;
+      currentScanningFile = '';
+    });
+
+    final end = DateTime.now();
+
+    debugPrint('metadata: loaded ${allMetadata.length} in '
+        '${end.difference(start)} seconds');
   }
 
   Future<void> readMetadataFromDir() async {
@@ -242,7 +278,16 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   Widget _buildDirTab(BuildContext context) {
     if (loadingFromDir) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(width: 10, height: 10),
+            Text(currentScanningFile),
+          ],
+        ),
+      );
     }
     return ListView.builder(
       itemCount: allMetadata.length,
@@ -286,7 +331,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
             if (tabController.index == 0) {
               await readMetadataFromFile();
             } else if (tabController.index == 1) {
-              await readMetadataFromDir();
+              await readMetadataStreamFromDir();
             } else {
               throw UnimplementedError();
             }
