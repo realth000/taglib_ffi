@@ -52,7 +52,7 @@ include_directories(taglib/taglib
         ${CMAKE_BINARY_DIR}/plugins/taglib_ffi/shared/taglib # For building as a flutter plugin
 )
 
-add_library(taglib_ffi SHARED
+add_library(tag_ffi SHARED
         taglib_ffi.h
         taglib_ffi.cpp
         src/MeipuruReader.h
@@ -67,11 +67,11 @@ add_library(taglib_ffi SHARED
 add_subdirectory(taglib)
 add_subdirectory(example)
 
-set_target_properties(taglib_ffi PROPERTIES
+set_target_properties(tag_ffi PROPERTIES
         PUBLIC_HEADER taglib_ffi.h
-        OUTPUT_NAME "taglib_ffi"
+        OUTPUT_NAME "tag_ffi"
 )
 
 target_compile_definitions(tag PUBLIC DART_SHARED_LIB)
-target_compile_definitions(taglib_ffi PUBLIC DART_SHARED_LIB)
-target_link_libraries(taglib_ffi tag)
+target_compile_definitions(tag_ffi PUBLIC DART_SHARED_LIB)
+target_link_libraries(tag_ffi tag)

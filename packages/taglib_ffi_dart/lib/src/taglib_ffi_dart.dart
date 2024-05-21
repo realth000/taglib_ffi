@@ -172,8 +172,8 @@ Future<Metadata?> _readMetadata(String filePath, bool readImage) async {
   try {
     meipuru = TaglibFfiBindings(
       Platform.isWindows
-          ? DynamicLibrary.open('taglib_ffi.dll')
-          : DynamicLibrary.open('libtaglib_ffi.so'),
+          ? DynamicLibrary.open('libtag_ffi.dll')
+          : DynamicLibrary.open('libtag_ffi.so'),
     );
     final Pointer<Char> tagFileName = filePath.toNativeUtf8().cast();
     originalTag = meipuru.readID3v2Tag(tagFileName, readImage);

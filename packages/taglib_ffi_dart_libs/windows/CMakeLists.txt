@@ -53,7 +53,7 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 # external build triggered from this build file.
 set(taglib_ffi_dart_libs_bundled_libraries
   "${CMAKE_CURRENT_SOURCE_DIR}/libtag.dll"
-  "${CMAKE_CURRENT_SOURCE_DIR}/libtaglib_fii.dll"
+  "${CMAKE_CURRENT_SOURCE_DIR}/libtag_ffi.dll"
   PARENT_SCOPE
 )
 

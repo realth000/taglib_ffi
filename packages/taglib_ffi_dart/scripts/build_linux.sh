@@ -21,7 +21,7 @@ if [ ! -d "${SAVE_ROOT}" ];then
 	mkdir "${SAVE_ROOT}"
 fi
 
-cp "${BUILD_ROOT}/libtaglib_ffi.so" "${SAVE_ROOT}/"
+cp "${BUILD_ROOT}/libtag_ffi.so" "${SAVE_ROOT}/"
 cp "${BUILD_ROOT}/taglib/taglib/libtag.so" "${SAVE_ROOT}/"
 cp "${BUILD_ROOT}/taglib/taglib/libtag.so.2" "${SAVE_ROOT}/"
 cp "${BUILD_ROOT}/taglib/taglib/libtag.so.2.0.1" "${SAVE_ROOT}/"
