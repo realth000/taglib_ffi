@@ -1,144 +1,113 @@
 #include "MeipuruReader.h"
 
+#include "id3v2tag.h"
+#include "mpegfile.h"
 #include "taglib/taglib/mpeg/id3v2/frames/attachedpictureframe.h"
-#include "taglib/taglib/mpeg/id3v2/id3v2tag.h"
-#include "taglib/taglib/toolkit/tpropertymap.h"
-#include "taglib/taglib/toolkit/tstring.h"
+#include "tpropertymap.h"
 
 namespace Meipuru {
 MeipuruReaderOption::MeipuruReaderOption() {
-  encoding = Util::Encoding::Unicode;
-  logLevel = Util::LogLevel::Error;
-  unicode = true;
+    encoding = Util::Encoding::Unicode;
+    logLevel = Util::LogLevel::Error;
+    unicode = true;
 }
 
 bool MeipuruReaderOption::useUnicode() const { return unicode; }
 
-MeipuruReader::MeipuruReader(const MeipuruReaderOption &meipuruReaderOption)
-    : option(meipuruReaderOption) {}
+MeipuruReader::MeipuruReader(const MeipuruReaderOption &meipuruReaderOption) : option(meipuruReaderOption) {}
 
-BaseTag *MeipuruReader::readTagFromFile(const char *filePath) {
-  std::cout << "Reading file" << filePath << std::endl;
-  const TagLib::FileRef fileRef(filePath);
-  if (fileRef.isNull()) {
-    std::cout << "File is NULL:" << filePath << std::endl;
-    return nullptr;
-  }
-
-  auto baseTag = new BaseTag();
-  baseTag->filePath = filePath;
-  baseTag->fileName = fileRef.file()->name();
-  fetchBaseTag(fileRef.file(), baseTag);
-  if (option.logLevel == Util::LogLevel::Debug) {
-    std::cout << "Read tag from file:" << std::endl;
-    baseTag->print();
-  }
-  return baseTag;
-}
-
-bool MeipuruReader::fetchBaseTag(const TagLib::File *file,
-                                 BaseTag *baseTag) const {
-  const auto *tag = file->tag();
-  if (tag == nullptr) {
-    return false;
-  }
-  const bool useUnicode = option.useUnicode();
-  baseTag->title = tag->title().to8Bit(useUnicode);
-  baseTag->artist = tag->artist().to8Bit(useUnicode);
-  baseTag->albumTitle = tag->album().to8Bit(useUnicode);
-  baseTag->year = tag->year();
-  baseTag->track = tag->track();
-  baseTag->genre = tag->genre().to8Bit(useUnicode);
-  baseTag->comment = tag->comment().to8Bit(useUnicode);
-
-  const auto propertyMap = file->properties();
-  // TODO: albumArtist is TagLib::string, should be std::string types.
-  baseTag->albumArtist =
-      propertyMap["ALBUMARTIST"].toString().to8Bit(useUnicode);
-  const auto trackNumberString = propertyMap["TRACKNUMBER"].toString();
-  if (!trackNumberString.isEmpty()) {
-    const auto pos = trackNumberString.split("/");
-    if (pos.size() == 2) {
-      // "1/20"
-      baseTag->track = pos[0].toInt();
-      baseTag->albumTotalTrack = pos[1].toInt();
-    } else if (trackNumberString[0] == '/') {
-      // "/20"
-      baseTag->albumTotalTrack = pos[1].toInt();
-    } else {
-      // "1"
-      baseTag->track = trackNumberString.toInt();
+ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath, bool readImage) const {
+    TagLib::MPEG::File mpegFile(filePath);
+    if (!mpegFile.isValid()) {
+        return nullptr;
     }
-  }
-  const auto *audioProperties = file->audioProperties();
-  if (audioProperties != nullptr) {
-    baseTag->bitRate = audioProperties->bitrate();
-    baseTag->sampleRate = audioProperties->sampleRate();
-    baseTag->channels = audioProperties->channels();
-    baseTag->lengthInSeconds = audioProperties->lengthInSeconds();
-    baseTag->lengthInMilliseconds = audioProperties->lengthInMilliseconds();
-  } else {
-    baseTag->bitRate = 0;
-    baseTag->sampleRate = 0;
-    baseTag->channels = 0;
-    baseTag->lengthInSeconds = 0;
-    baseTag->lengthInMilliseconds = 0;
-  }
-  return true;
-}
-
-ID3v2Tag *MeipuruReader::readID3v2TagFromFile(const char *filePath,
-                                              bool readImage) {
-  TagLib::MPEG::File mpegFile(filePath);
-  if (!mpegFile.isValid()) {
-    return nullptr;
-  }
-  if (!mpegFile.hasID3v2Tag()) {
-    return nullptr;
-  }
-  auto id3v2Tag = mpegFile.ID3v2Tag();
-  if (id3v2Tag == nullptr) {
-    return nullptr;
-  }
-  const bool useUnicode = option.useUnicode();
-  auto retTag = new ID3v2Tag;
-  retTag->filePath = filePath;
-  retTag->fileName = mpegFile.name();
-  fetchBaseTag(&mpegFile, retTag);
-  const auto &frameListMap = id3v2Tag->frameListMap();
-  // TODO: Handle synchronous lyrics.
-  // if (!frameListMap["SYLT"].isEmpty() && frameListMap["SYLT"].front() !=
-  // nullptr) {
-  //     retTag->lyrics =
-  //     frameListMap["SYLT"].front()->toString().to8Bit(useUnicode);
-  //     retTag->lyricsLength = retTag->lyrics.length();
-  // }
-  if (!frameListMap["USLT"].isEmpty() &&
-      frameListMap["USLT"].front() != nullptr) {
-    const auto lyricString =
-        frameListMap["USLT"].front()->toString().to8Bit(useUnicode);
-    retTag->lyricsLength = lyricString.length();
-    retTag->lyrics = lyricString;
-  } else {
-    retTag->lyrics = "";
-    retTag->lyricsLength = 0;
-  }
-  if (readImage && !frameListMap["APIC"].isEmpty()) {
-    auto albumCover = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(
-        frameListMap["APIC"].front());
-    if (albumCover != nullptr && albumCover->picture().size() > 0) {
-      Util::Picture picture = {};
-      picture.size = albumCover->picture().size();
-      picture.data.append(albumCover->picture());
-      picture.mimetype = albumCover->mimeType().to8Bit(option.useUnicode());
-      retTag->albumCover = std::make_unique<Util::Picture>(picture);
-    } else {
-      retTag->albumCover = std::make_unique<Util::Picture>();
+    if (!mpegFile.hasID3v2Tag()) {
+        return nullptr;
     }
-  } else {
-    retTag->albumCover = std::make_unique<Util::Picture>();
-  }
-  return retTag;
+    auto id3v2Tag = mpegFile.ID3v2Tag();
+    if (id3v2Tag == nullptr) {
+        return nullptr;
+    }
+    const bool useUnicode = option.useUnicode();
+    auto retTag = new ID3v2Tag;
+    retTag->filePath = filePath;
+    retTag->fileName = mpegFile.name();
+    const auto *tag = mpegFile.tag();
+    if (tag == nullptr) {
+        return nullptr;
+    }
+    retTag->title = tag->title().to8Bit(useUnicode);
+    retTag->artist = tag->artist().to8Bit(useUnicode);
+    retTag->albumTitle = tag->album().to8Bit(useUnicode);
+    retTag->year = tag->year();
+    retTag->track = tag->track();
+    retTag->genre = tag->genre().to8Bit(useUnicode);
+    retTag->comment = tag->comment().to8Bit(useUnicode);
+
+    const auto propertyMap = mpegFile.properties();
+    // TODO: albumArtist is TagLib::string, should be std::string types.
+    retTag->albumArtist = propertyMap["ALBUMARTIST"].toString().to8Bit(useUnicode);
+    const auto trackNumberString = propertyMap["TRACKNUMBER"].toString();
+    if (!trackNumberString.isEmpty()) {
+        const auto pos = trackNumberString.split("/");
+        if (pos.size() == 2) {
+            // "1/20"
+            retTag->track = pos[0].toInt();
+            retTag->albumTotalTrack = pos[1].toInt();
+        } else if (trackNumberString[0] == '/') {
+            // "/20"
+            retTag->albumTotalTrack = pos[1].toInt();
+        } else {
+            // "1"
+            retTag->track = trackNumberString.toInt();
+        }
+    }
+    const auto *audioProperties = mpegFile.audioProperties();
+    if (audioProperties != nullptr) {
+        retTag->bitRate = audioProperties->bitrate();
+        retTag->sampleRate = audioProperties->sampleRate();
+        retTag->channels = audioProperties->channels();
+        retTag->lengthInSeconds = audioProperties->lengthInSeconds();
+        retTag->lengthInMilliseconds = audioProperties->lengthInMilliseconds();
+    } else {
+        retTag->bitRate = 0;
+        retTag->sampleRate = 0;
+        retTag->channels = 0;
+        retTag->lengthInSeconds = 0;
+        retTag->lengthInMilliseconds = 0;
+    }
+
+    const auto &frameListMap = id3v2Tag->frameListMap();
+    // TODO: Handle synchronous lyrics.
+    // if (!frameListMap["SYLT"].isEmpty() && frameListMap["SYLT"].front() !=
+    // nullptr) {
+    //     retTag->lyrics =
+    //     frameListMap["SYLT"].front()->toString().to8Bit(useUnicode);
+    //     retTag->lyricsLength = retTag->lyrics.length();
+    // }
+    if (!frameListMap["USLT"].isEmpty() && frameListMap["USLT"].front() != nullptr) {
+        const auto lyricString = frameListMap["USLT"].front()->toString().to8Bit(useUnicode);
+        retTag->lyricsLength = lyricString.length();
+        retTag->lyrics = lyricString;
+    } else {
+        retTag->lyrics = "";
+        retTag->lyricsLength = 0;
+    }
+    if (readImage && !frameListMap["APIC"].isEmpty()) {
+        auto albumCover = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameListMap["APIC"].front());
+        if (albumCover != nullptr && albumCover->picture().size() > 0) {
+            Util::Picture picture = {};
+            picture.size = albumCover->picture().size();
+            picture.data.append(albumCover->picture());
+            picture.mimetype = albumCover->mimeType().to8Bit(option.useUnicode());
+            retTag->albumCover = std::make_unique<Util::Picture>(picture);
+        } else {
+            retTag->albumCover = std::make_unique<Util::Picture>();
+        }
+    } else {
+        retTag->albumCover = std::make_unique<Util::Picture>();
+    }
+    return retTag;
 }
 
 } // namespace Meipuru

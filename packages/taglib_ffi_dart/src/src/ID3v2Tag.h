@@ -1,18 +1,30 @@
-#ifndef MEIPURU_ID3V2TAG_H
-#define MEIPURU_ID3V2TAG_H
+#pragma once
 
-#include "BaseTag.h"
 #include "Utils.h"
 
 namespace Meipuru {
-class ID3v2Tag : public BaseTag {
-public:
-  void print() override;
+class ID3v2Tag {
+  public:
+    void print() const;
 
-  std::unique_ptr<Util::Picture> albumCover;
-  std::string lyrics;
-  size_t lyricsLength;
+    std::string filePath;
+    std::string fileName;
+    std::string title;
+    std::string artist;
+    std::string albumTitle;
+    std::string albumArtist;
+    unsigned int year;
+    unsigned int track;
+    int albumTotalTrack;
+    std::string genre;
+    std::string comment;
+    int bitRate;
+    int sampleRate;
+    int channels;
+    int lengthInSeconds;
+    int lengthInMilliseconds;
+    std::unique_ptr<Util::Picture> albumCover;
+    std::string lyrics;
+    size_t lyricsLength;
 };
 } // namespace Meipuru
-
-#endif // MEIPURU_ID3V2TAG_H

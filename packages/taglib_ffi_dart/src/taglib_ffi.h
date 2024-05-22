@@ -25,61 +25,35 @@ extern "C" {
 #endif
 
 typedef struct {
-  const char *filePath;
-  const char *fileName;
-  const char *title;
-  const char *artist;
-  const char *albumTitle;
-  const char *albumArtist;
-  unsigned int year;
-  unsigned int track;
-  int albumTotalTrack;
-  const char *genre;
-  const char *comment;
-  int bitRate;
-  int sampleRate;
-  int channels;
-  int lengthInSeconds;
-  int lengthInMilliseconds;
-  // The `_owner` field is an internal member who really owns the strings in
-  // current `Tag`. DO NOT MODIFY it except free;
-  void *_owner;
-} Tag;
-
-typedef struct {
-  const char *filePath;
-  const char *fileName;
-  const char *title;
-  const char *artist;
-  const char *albumTitle;
-  const char *albumArtist;
-  unsigned int year;
-  unsigned int track;
-  int albumTotalTrack;
-  const char *genre;
-  const char *comment;
-  int bitRate;
-  int sampleRate;
-  int channels;
-  int lengthInSeconds;
-  int lengthInMilliSeconds;
-  const char *lyrics;
-  unsigned long lyricsLength;
-  // use uint8_t
-  // refer:
-  // https://github.com/folksable/blurhash_ffi/blob/main/src/blurhash_ffi.h
-  uint8_t *albumCover;
-  unsigned int albumCoverLength;
-  // The `_owner` field is an internal member who really owns the strings in
-  // current `Tag`. DO NOT MODIFY it except free;
-  void *_owner;
+    const char *filePath;
+    const char *fileName;
+    const char *title;
+    const char *artist;
+    const char *albumTitle;
+    const char *albumArtist;
+    unsigned int year;
+    unsigned int track;
+    int albumTotalTrack;
+    const char *genre;
+    const char *comment;
+    int bitRate;
+    int sampleRate;
+    int channels;
+    int lengthInSeconds;
+    int lengthInMilliSeconds;
+    const char *lyrics;
+    unsigned long lyricsLength;
+    // use uint8_t
+    // refer:
+    // https://github.com/folksable/blurhash_ffi/blob/main/src/blurhash_ffi.h
+    uint8_t *albumCover;
+    unsigned int albumCoverLength;
+    // The `_owner` field is an internal member who really owns the strings in
+    // current `Tag`. DO NOT MODIFY it except free;
+    void *_owner;
 } ID3v2Tag;
 
-FFI_PLUGIN_EXPORT Tag *readTag(const char *filePath);
-
 FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath, bool readImage);
-
-FFI_PLUGIN_EXPORT void freeTag(const Tag *tag);
 
 FFI_PLUGIN_EXPORT void freeID3v2Tag(const ID3v2Tag *id3V2Tag);
 

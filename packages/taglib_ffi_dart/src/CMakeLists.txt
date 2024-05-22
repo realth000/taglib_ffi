@@ -56,8 +56,6 @@ add_library(tag_ffi SHARED
         taglib_ffi.cpp
         src/MeipuruReader.h
         src/MeipuruReader.cpp
-        src/BaseTag.h
-        src/BaseTag.cpp
         src/ID3v2Tag.h
         src/ID3v2Tag.cpp
         src/Utils.h
