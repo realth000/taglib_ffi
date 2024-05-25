@@ -54,11 +54,13 @@ include_directories(taglib/taglib
 add_library(tag_ffi SHARED
         taglib_ffi.h
         taglib_ffi.cpp
-        src/MeipuruReader.h
-        src/MeipuruReader.cpp
-        src/ID3v2Tag.h
-        src/ID3v2Tag.cpp
-        src/Utils.h
+        src/ReaderOption.hpp
+        src/Reader.hpp
+        src/Reader.cpp
+        src/ID3v2.hpp
+        src/ID3v2.cpp
+        src/Utils.hpp
+        src/Utils.cpp
 )
 
 add_subdirectory(taglib)

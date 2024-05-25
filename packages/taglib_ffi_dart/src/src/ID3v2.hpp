@@ -1,18 +1,20 @@
 #pragma once
 
-#include "Utils.h"
+#include "ReaderOption.hpp"
+#include "Utils.hpp"
 
-namespace Meipuru {
-class ID3v2Tag {
+namespace FFI::ID3v2 {
+
+class ID3v2 {
   public:
     void print() const;
 
     std::string filePath;
     std::string fileName;
     std::string title;
-    std::string artist;
+    std::vector<std::string> artist;
     std::string albumTitle;
-    std::string albumArtist;
+    std::vector<std::string> albumArtist;
     unsigned int year;
     unsigned int track;
     int albumTotalTrack;
@@ -23,8 +25,10 @@ class ID3v2Tag {
     int channels;
     int lengthInSeconds;
     int lengthInMilliseconds;
-    std::unique_ptr<Util::Picture> albumCover;
+    std::vector<Util::Picture> albumCover;
     std::string lyrics;
     size_t lyricsLength;
 };
-} // namespace Meipuru
+
+ID3v2 *readFromFile(const char *filePath, const ReaderOption &readerOption);
+} // namespace FFI::ID3v2

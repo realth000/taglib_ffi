@@ -2,19 +2,17 @@
 
 #include <iostream>
 
-#include "src/MeipuruReader.h"
+#include "src/Reader.hpp"
 
 FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath, bool readImage) {
-    auto reader = Meipuru::MeipuruReader();
+    auto reader = FFI::Reader();
     auto id3v2Tag = reader.readID3v2TagFromFile(filePath, readImage);
 
     if (id3v2Tag == nullptr) {
         return nullptr;
     }
 
-    // The data in `id3v2Tag` is also implicitly "borrowed" by
-    // `meipuruID3v2Tag`.
-    auto *meipuruID3v2Tag = new ID3v2Tag{
+    auto *ret = new ID3v2Tag{
         id3v2Tag->filePath.c_str(),
         id3v2Tag->fileName.c_str(),
         id3v2Tag->title.c_str(),
@@ -38,14 +36,14 @@ FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath, bool readImage) {
         id3v2Tag,
     };
     if (readImage) {
-        meipuruID3v2Tag->albumCover = (uint8_t *)id3v2Tag->albumCover->data.data();
-        meipuruID3v2Tag->albumCoverLength = id3v2Tag->albumCover->size;
+        ret->albumCover = (uint8_t *)id3v2Tag->albumCover->data.data();
+        ret->albumCoverLength = id3v2Tag->albumCover->size;
     }
-    return meipuruID3v2Tag;
+    return ret;
 }
 
 FFI_PLUGIN_EXPORT void freeID3v2Tag(const ID3v2Tag *id3V2Tag) {
-    delete static_cast<Meipuru::ID3v2Tag *>(id3V2Tag->_owner);
+    delete static_cast<FFI::ID3v2::ID3v2 *>(id3V2Tag->_owner);
     delete id3V2Tag;
 }
 
