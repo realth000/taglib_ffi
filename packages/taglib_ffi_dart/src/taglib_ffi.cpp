@@ -1,24 +1,34 @@
 #include "taglib_ffi.h"
 
-#include <iostream>
-
 #include "src/Reader.hpp"
 
-FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath, bool readImage) {
-    auto reader = FFI::Reader();
-    auto id3v2Tag = reader.readID3v2TagFromFile(filePath, readImage);
+struct Id3v2TagOwner {
+    // On heap.
+    const FFI::ID3v2::ID3v2 *tag;
+};
+
+const ID3v2Tag *readID3v2Tag(const char *filePath, bool readImage) {
+    const auto readerOption = FFI::ReaderOption{
+        FFI::Util::Encoding::Utf8,
+        FFI::Util::LogLevel::None,
+        true,
+    };
+    const auto reader = FFI::Reader(readerOption);
+    const auto id3v2Tag = reader.readID3v2TagFromFile(filePath);
 
     if (id3v2Tag == nullptr) {
         return nullptr;
     }
 
-    auto *ret = new ID3v2Tag{
+    const auto tag = new ID3v2Tag{
         id3v2Tag->filePath.c_str(),
         id3v2Tag->fileName.c_str(),
         id3v2Tag->title.c_str(),
-        id3v2Tag->artist.c_str(),
+        nullptr, // Aritst
+        id3v2Tag->artist.size(),
         id3v2Tag->albumTitle.c_str(),
-        id3v2Tag->albumArtist.c_str(),
+        nullptr, // Album artist
+        id3v2Tag->albumArtist.size(),
         id3v2Tag->year,
         id3v2Tag->track,
         id3v2Tag->albumTotalTrack,
@@ -29,46 +39,49 @@ FFI_PLUGIN_EXPORT ID3v2Tag *readID3v2Tag(const char *filePath, bool readImage) {
         id3v2Tag->channels,
         id3v2Tag->lengthInSeconds,
         id3v2Tag->lengthInMilliseconds,
+        nullptr, // Picture
+        id3v2Tag->pictures.size(),
         id3v2Tag->lyrics.c_str(),
-        (unsigned long)(id3v2Tag->lyricsLength),
-        nullptr,
-        0,
-        id3v2Tag,
+        new Id3v2TagOwner{id3v2Tag},
     };
-    if (readImage) {
-        ret->albumCover = (uint8_t *)id3v2Tag->albumCover->data.data();
-        ret->albumCoverLength = id3v2Tag->albumCover->size;
-    }
-    return ret;
-}
-
-FFI_PLUGIN_EXPORT void freeID3v2Tag(const ID3v2Tag *id3V2Tag) {
-    delete static_cast<FFI::ID3v2::ID3v2 *>(id3V2Tag->_owner);
-    delete id3V2Tag;
-}
-
-FFI_PLUGIN_EXPORT void printID3v2Tag(ID3v2Tag *id3V2Tag) {
-    if (id3V2Tag == nullptr) {
-        std::cout << "ptr is empty" << std::endl;
-        return;
+    // FIXME:
+    tag->artist = (const char **)malloc(sizeof(char *) * id3v2Tag->artist.size());
+    for (auto i = 0; i < id3v2Tag->artist.size(); i++) {
+        tag->artist[i] = id3v2Tag->artist[i].c_str();
     }
 
-    std::cout << "File: " << id3V2Tag->fileName << "\n"
-              << "File Path: " << id3V2Tag->filePath << "\n"
-              << "Title: " << id3V2Tag->title << "\n"
-              << "Artist: " << id3V2Tag->artist << "\n"
-              << "Album Title: " << id3V2Tag->albumTitle << "\n"
-              << "Album Artist: " << id3V2Tag->albumArtist << "\n"
-              << "Year: " << id3V2Tag->year << "\n"
-              << "Track: " << id3V2Tag->track << "\n"
-              << "Album Track Count: " << id3V2Tag->albumTotalTrack << "\n"
-              << "Genre: " << id3V2Tag->genre << "\n"
-              << "Comment: " << id3V2Tag->comment << "\n"
-              << "Bit Rate: " << id3V2Tag->bitRate << "\n"
-              << "Sample Rate: " << id3V2Tag->sampleRate << "\n"
-              << "Channels: " << id3V2Tag->channels << "\n"
-              << "LengthInSeconds: " << id3V2Tag->lengthInSeconds << "\n"
-              << "LengthInMilliseconds: " << id3V2Tag->lengthInMilliSeconds << "\n"
-              << "Album Cover (size): " << id3V2Tag->albumCoverLength << "\n"
-              << "Lyrics (size): " << id3V2Tag->lyricsLength << std::endl;
+    return tag;
 }
+
+void freeID3v2Tag(const ID3v2Tag *tag) {
+    free(tag->artist);
+    delete tag->_owner->tag;
+    delete tag->_owner;
+    delete tag;
+}
+
+// FFI_PLUGIN_EXPORT void printID3v2Tag(ID3v2Tag *id3V2Tag) {
+//     if (id3V2Tag == nullptr) {
+//         std::cout << "ptr is empty" << std::endl;
+//         return;
+//     }
+//
+//     std::cout << "File: " << id3V2Tag->fileName << "\n"
+//               << "File Path: " << id3V2Tag->filePath << "\n"
+//               << "Title: " << id3V2Tag->title << "\n"
+//               << "Artist: " << id3V2Tag->artist << "\n"
+//               << "Album Title: " << id3V2Tag->albumTitle << "\n"
+//               << "Album Artist: " << id3V2Tag->albumArtist << "\n"
+//               << "Year: " << id3V2Tag->year << "\n"
+//               << "Track: " << id3V2Tag->track << "\n"
+//               << "Album Track Count: " << id3V2Tag->albumTotalTrack << "\n"
+//               << "Genre: " << id3V2Tag->genre << "\n"
+//               << "Comment: " << id3V2Tag->comment << "\n"
+//               << "Bit Rate: " << id3V2Tag->bitRate << "\n"
+//               << "Sample Rate: " << id3V2Tag->sampleRate << "\n"
+//               << "Channels: " << id3V2Tag->channels << "\n"
+//               << "LengthInSeconds: " << id3V2Tag->lengthInSeconds << "\n"
+//               << "LengthInMilliseconds: " << id3V2Tag->lengthInMilliSeconds << "\n"
+//               << "Album Cover (size): " << id3V2Tag->albumCoverLength << "\n"
+//               << "Lyrics (size): " << id3V2Tag->lyricsLength << std::endl;
+// }

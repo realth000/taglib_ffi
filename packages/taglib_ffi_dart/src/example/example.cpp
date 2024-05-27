@@ -12,7 +12,13 @@ void printFileMetadata(std::string_view filePath) {
         return;
     }
 
-    printf("title=%s, artist=%s, album=%s\n", fp->title, fp->artist, fp->albumTitle);
+    printf("%s\n", fp->fileName);
+    printf("  title=%s\n", fp->title);
+    printf("  artist=\n");
+    for (int i = 0; i < fp->artistLength; i++) {
+        printf("    title=%s\n", fp->artist[i]);
+    }
+    printf("  album=%s\n", fp->albumTitle);
 
     freeID3v2Tag(fp);
 }

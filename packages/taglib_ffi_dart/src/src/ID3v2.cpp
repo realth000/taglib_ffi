@@ -40,7 +40,7 @@ void ID3v2::print() const {
               << "Channels: " << channels << "\n"
               << "LengthInSeconds: " << lengthInSeconds << "\n"
               << "lengthInMilliseconds: " << lengthInMilliseconds << "\n"
-              << "Album Cover (count): " << this->albumCover.size() << "\n"
+              << "Album Cover (count): " << this->pictures.size() << "\n"
               << "Lyrics (size): " << lyricsLength << std::endl;
 }
 
@@ -129,12 +129,12 @@ ID3v2 *readFromFile(const char *filePath, const ReaderOption &readerOption) {
         const auto allPictures = frames[Frame::picture];
         const auto count = allPictures.size();
         if (count <= 0) {
-            retTag->albumCover = {};
+            retTag->pictures = {};
         } else {
-            retTag->albumCover = std::vector<Util::Picture>{count};
+            retTag->pictures = std::vector<Util::Picture>{count};
             for (auto i = 0; i < count; i++) {
                 const auto image = dynamic_cast<const TagLib::ID3v2::AttachedPictureFrame *>(allPictures[i]);
-                retTag->albumCover[i] = {
+                retTag->pictures[i] = {
                     image->picture(),
                     image->mimeType().to8Bit(true),
                     image->picture().size(),
@@ -142,7 +142,7 @@ ID3v2 *readFromFile(const char *filePath, const ReaderOption &readerOption) {
             };
         }
     } else {
-        retTag->albumCover = {};
+        retTag->pictures = {};
     }
 
     return retTag;
